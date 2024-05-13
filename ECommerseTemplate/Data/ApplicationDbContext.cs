@@ -1,4 +1,5 @@
 ﻿using ECommerseTemplate.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerseTemplate.Data
@@ -12,5 +13,14 @@ namespace ECommerseTemplate.Data
 
         // Db tables
         public DbSet<CategoryModel> Categories { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CategoryModel>().HasData(
+                new CategoryModel { Id = 1, Name = "Action", DisplayOrder = 1 },
+                new CategoryModel { Id = 2, Name = "Sci-Fi", DisplayOrder = 2 },
+                new CategoryModel { Id = 3, Name = "History", DisplayOrder = 3 }
+                );
+        }
     }
 }
