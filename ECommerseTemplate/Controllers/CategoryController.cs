@@ -33,8 +33,31 @@ namespace ECommerseTemplate.Controllers
 			    return RedirectToAction("Index");
 			}
 
-            return View();
-           
+            return View(); 
+		}
+
+		public IActionResult Edit(int? id)
+		{
+			if (id == null || id == 0)
+			{ 
+				return NotFound();
+			}
+
+			// id of Edit is passed from the Index.cshtml asp-route-id="@obj.Id" 
+			CategoryModel fetchedCategory = _db.Categories.Find(id);
+			if (fetchedCategory == null)
+			{
+				return NotFound();
+			}
+
+			return View(fetchedCategory);
+		}
+
+		[HttpPost]
+		public IActionResult Edit(CategoryModel obj)
+		{
+			// TODO
+			return View();
 		}
 	}
 }
