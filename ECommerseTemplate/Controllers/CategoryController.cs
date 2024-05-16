@@ -45,7 +45,7 @@ namespace ECommerseTemplate.Controllers
 			}
 
 			// id of Edit is passed from the Index.cshtml asp-route-id="@obj.Id" 
-			CategoryModel fetchedCategory = _db.Categories.Find(id);
+			CategoryModel? fetchedCategory = _db.Categories.Find(id);
 			if (fetchedCategory == null)
 			{
 				return NotFound();
