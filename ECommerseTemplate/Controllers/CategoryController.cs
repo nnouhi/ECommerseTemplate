@@ -1,4 +1,4 @@
-﻿using ECommerseTemplate.Data;
+﻿using ECommerseTemplate.DataAccess.Data;
 using ECommerseTemplate.Models;
 using Microsoft.AspNetCore.Mvc;
 

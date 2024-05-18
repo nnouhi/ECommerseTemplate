@@ -1,8 +1,8 @@
 ﻿using ECommerseTemplate.Models;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerseTemplate.Data
+namespace ECommerseTemplate.DataAccess.Data
 {
     public class ApplicationDbContext : DbContext
     {
