@@ -9,6 +9,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+
         public CategoryController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -16,8 +17,8 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            List<CategoryModel> objCategoryList = _unitOfWork.Category.GetAll().ToList();
-            return View(objCategoryList);
+            List<Category> categories = _unitOfWork.Category.GetAll().ToList();
+            return View(categories);
         }
 
         public IActionResult Create()
@@ -26,7 +27,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CategoryModel obj)
+        public IActionResult Create(Category obj)
         {
             if (ModelState.IsValid)
             {
@@ -47,7 +48,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
             }
 
             // id of Edit is passed from the Index.cshtml asp-route-id="@obj.Id" 
-            CategoryModel? fetchedCategory = _unitOfWork.Category.Get(u => u.Id == id);
+            Category fetchedCategory = _unitOfWork.Category.Get(u => u.Id == id);
             if (fetchedCategory == null)
             {
                 return NotFound();
@@ -57,7 +58,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(CategoryModel obj)
+        public IActionResult Edit(Category obj)
         {
             if (ModelState.IsValid)
             {
@@ -77,7 +78,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            CategoryModel fetchedCategory = _unitOfWork.Category.Get(u => u.Id == id);
+            Category fetchedCategory = _unitOfWork.Category.Get(u => u.Id == id);
             if (fetchedCategory == null)
             {
                 return NotFound();
@@ -87,7 +88,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(CategoryModel obj)
+        public IActionResult Delete(Category obj)
         {
             if (ModelState.IsValid)
             {

@@ -24,7 +24,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ECommerseTemplate.Models.CategoryModel", b =>
+            modelBuilder.Entity("ECommerseTemplate.Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ECommerseTemplate.DataAccess.Repository
 {
-	public class CategoryRepository : Repository<CategoryModel>, ICategoryRepository
+	public class CategoryRepository : Repository<Category>, ICategoryRepository
 	{
 		private readonly ApplicationDbContext _db;
 		public CategoryRepository(ApplicationDbContext db) : base(db) 
@@ -18,7 +18,7 @@ namespace ECommerseTemplate.DataAccess.Repository
 			_db = db;
 		}
 
-		public void Update(CategoryModel category)
+		public void Update(Category category)
 		{
 			_db.Update(category);
 		}

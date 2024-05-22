@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ECommerseTemplate.Models
 {
-    public class CategoryModel
+    public class Category
     {
         // This is called Data Annotation, basically we are saying this property will be the PK
         [Key]
