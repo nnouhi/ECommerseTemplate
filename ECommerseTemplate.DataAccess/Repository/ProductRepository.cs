@@ -19,9 +19,8 @@ namespace ECommerseTemplate.DataAccess.Repository
 
         public void Update(Product product)
         {
-            // Manual update
             Product productFromDb = _db.Products.FirstOrDefault(s => s.Id == product.Id);
-            if (productFromDb == null)
+            if (productFromDb != null)
             {
                 productFromDb.Title = product.Title;
                 productFromDb.ISBN = product.ISBN;
@@ -33,7 +32,7 @@ namespace ECommerseTemplate.DataAccess.Repository
                 productFromDb.Description = product.Description;
                 productFromDb.CategoryId = product.CategoryId;
 
-                if (productFromDb.ImageUrl != null) 
+                if (product.ImageUrl != null)
                 {
                     productFromDb.ImageUrl = product.ImageUrl;
                 }
