@@ -1,11 +1,14 @@
 ﻿using ECommerseTemplate.DataAccess.Data;
 using ECommerseTemplate.DataAccess.Repository.IRepository;
 using ECommerseTemplate.Models;
+using ECommerseTemplate.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerseTemplate.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area(SD.Role_Admin)]
+    [Authorize(Roles = SD.Role_Admin)]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

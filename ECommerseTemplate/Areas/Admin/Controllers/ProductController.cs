@@ -1,12 +1,15 @@
 ﻿using ECommerseTemplate.DataAccess.Repository.IRepository;
 using ECommerseTemplate.Models;
 using ECommerseTemplate.Models.ViewModels;
+using ECommerseTemplate.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ECommerseTemplate.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area(SD.Role_Admin)]
+    [Authorize(Roles = SD.Role_Admin)]
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
