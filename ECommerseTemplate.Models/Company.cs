@@ -12,7 +12,7 @@ namespace ECommerseTemplate.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public required string Name { get; set; }
+        public string Name { get; set; }
         [Display(Name = "Street Address")]
         public string? StreetAddress { get; set; }
         public string? Country { get; set; }
