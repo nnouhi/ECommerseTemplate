@@ -57,7 +57,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
 
                 _unitOfWork.Save();
                 TempData["success"] = "Company created successfully";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             else
             {

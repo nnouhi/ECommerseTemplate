@@ -85,7 +85,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
 
                 TempData["success"] = $"Product {(productVM.Product.Id == 0 ? "created" : "modified")} successfully";
                 _unitOfWork.Save();
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             else
             {

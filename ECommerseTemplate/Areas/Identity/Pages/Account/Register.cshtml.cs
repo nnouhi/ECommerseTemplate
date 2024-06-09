@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using ECommerseTemplate.DataAccess.Repository.IRepository;
 using ECommerseTemplate.Models;
 using ECommerseTemplate.Utility;
 using Microsoft.AspNetCore.Authentication;
@@ -34,6 +35,7 @@ namespace ECommerseTemplate.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IUnitOfWork _unitOfWork;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -41,8 +43,10 @@ namespace ECommerseTemplate.Areas.Identity.Pages.Account
             SignInManager<IdentityUser> signInManager,
             RoleManager<IdentityRole> roleManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IUnitOfWork unitOfWork)
         {
+            _unitOfWork = unitOfWork;
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
@@ -123,6 +127,9 @@ namespace ECommerseTemplate.Areas.Identity.Pages.Account
 
             [Display(Name = "Phone Number")]
             public string PhoneNumber { get; set; }
+            public int? CompanyId{ get; set; }
+            [ValidateNever]
+            public IEnumerable<SelectListItem> CompanyList { get; set; }
         }
 
 
@@ -144,7 +151,12 @@ namespace ECommerseTemplate.Areas.Identity.Pages.Account
                 {
                     Text = role.Name,
                     Value = role.Name
-                }).ToList()
+                }).ToList(),
+                CompanyList = _unitOfWork.Company.GetAll().Select(company => new SelectListItem
+                {
+                    Text = company.Name,
+                    Value = company.Id.ToString()
+                })
             };
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -168,6 +180,12 @@ namespace ECommerseTemplate.Areas.Identity.Pages.Account
                     user.PostalCode = Input.PostalCode;
                     user.City = Input.City;
                     user.PhoneNumber = Input.PhoneNumber;
+
+                    if (Input.Role == SD.Role_Company)
+                    { 
+                        user.CompanyId = Input.CompanyId;
+                    }
+
                     _logger.LogInformation("User created a new account with password.");
                     if (!string.IsNullOrEmpty(Input.Role))
                     {
