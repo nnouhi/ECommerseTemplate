@@ -23,5 +23,7 @@ namespace ECommerseTemplate.Models
         [ForeignKey("ApplicationUserId")]
         [ValidateNever]
         public ApplicationUser? ApplicationUser { get; set; }
+        [NotMapped]
+        public float Price { get; set; }
     }
 }
