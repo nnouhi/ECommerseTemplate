@@ -5,14 +5,17 @@ using ECommerseTemplate.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe")); // Inject stripe settings
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
 // Always after Identity
 builder.Services.ConfigureApplicationCookie(options => {
     options.LoginPath = $"/Identity/Account/Login";
@@ -41,15 +44,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Middleware section
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-// Check credentials
 app.UseAuthentication();
-// Enable CORS
 app.UseCors("CorsPolicy");
-// Check Roles
 app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllerRoute(

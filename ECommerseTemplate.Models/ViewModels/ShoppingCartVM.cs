@@ -9,6 +9,6 @@ namespace ECommerseTemplate.Models.ViewModels
     public class ShoppingCartVM
     {
         public IEnumerable<ShoppingCart>? ShoppingCartList { get; set; }
-        public float OrderTotal { get; set; }
+        public OrderHeader OrderHeader { get; set; }
     }
 }
