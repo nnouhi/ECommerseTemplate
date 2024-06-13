@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerseTemplate.Areas.Admin.Controllers
 {
-    [Area(SD.Role_Admin)]
-    [Authorize(Roles = SD.Role_Admin)]
+    [Area(SD.Roles.Admin)]
+    [Authorize(Roles = SD.Roles.Admin)]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

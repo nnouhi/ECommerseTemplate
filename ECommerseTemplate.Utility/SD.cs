@@ -1,31 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 
-namespace ECommerseTemplate.Utility
+public static class SD
 {
-	public static class SD
+	public static class Roles
 	{
-		
-		public const string Role_Customer = "Customer";
-		public const string Role_Company = "Company";
-		public const string Role_Admin = "Admin";
-		public const string Role_Employee = "Employee";
+		public const string Customer = "Customer";
+		public const string Company = "Company";
+		public const string Admin = "Admin";
+		public const string Employee = "Employee";
+	}
 
-		
-		public const string Order_Status_Pending = "Pending";
-		public const string Order_Status_Approved = "Approved";
-		public const string Order_Status_InProcess = "Processing";
-		public const string Order_Status_Shipped = "Shipped";
-		public const string Order_Status_Cancelled = "Cancelled";
-		public const string Order_Status_Refunded = "Refunded";
+	public static class OrderStatuses
+	{
+		public const string Pending = "Pending";
+		public const string Approved = "Approved";
+		public const string InProcess = "Processing";
+		public const string Shipped = "Shipped";
+		public const string Cancelled = "Cancelled";
+		public const string Refunded = "Refunded";
+	}
 
-		
-		public const string Payment_Status_Pending = "Pending";
-		public const string Payment_Status_Approved = "Approved";
-		public const string Payment_Status_DelayedPayment = "ApprovedForDelayedPayment";
-		public const string Payment_Status_Rejected = "Rejected";
+	public static class PaymentStatuses
+	{
+		public const string Pending = "Pending";
+		public const string Approved = "Approved";
+		public const string DelayedPayment = "ApprovedForDelayedPayment";
+		public const string Rejected = "Rejected";
+	}
+
+
+	public static class URLs
+	{
+		public const string DevelopmentDomain = "https://localhost:7080/";
+		public const string ProductionDomain = "https://example.com/";
+	}
+
+	public static class ApplicationSettings
+	{
+		public const string ApplicationMode = "Development";
 	}
 }

@@ -136,13 +136,13 @@ namespace ECommerseTemplate.Areas.Identity.Pages.Account
         public async Task OnGetAsync(string returnUrl = null)
         {
             // NOTE: Can also use if (!_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult()) {}
-            bool roleExists = await _roleManager.RoleExistsAsync(SD.Role_Admin);
+            bool roleExists = await _roleManager.RoleExistsAsync(SD.Roles.Admin);
             if (!roleExists) 
             {
-                await _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin));
-                await _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee));
-                await _roleManager.CreateAsync(new IdentityRole(SD.Role_Company));
-                await _roleManager.CreateAsync(new IdentityRole(SD.Role_Customer));
+                await _roleManager.CreateAsync(new IdentityRole(SD.Roles.Admin));
+                await _roleManager.CreateAsync(new IdentityRole(SD.Roles.Employee));
+                await _roleManager.CreateAsync(new IdentityRole(SD.Roles.Company));
+                await _roleManager.CreateAsync(new IdentityRole(SD.Roles.Customer));
             }
 
             Input = new InputModel
@@ -181,7 +181,7 @@ namespace ECommerseTemplate.Areas.Identity.Pages.Account
                     user.City = Input.City;
                     user.PhoneNumber = Input.PhoneNumber;
 
-                    if (Input.Role == SD.Role_Company)
+                    if (Input.Role == SD.Roles.Company)
                     { 
                         user.CompanyId = Input.CompanyId;
                     }
@@ -194,7 +194,7 @@ namespace ECommerseTemplate.Areas.Identity.Pages.Account
                     else
                     {
                         // Default role 
-                        await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+                        await _userManager.AddToRoleAsync(user, SD.Roles.Customer);
                     }
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ECommerseTemplate.Areas.Admin.Controllers
 {
-    [Area(SD.Role_Admin)]
-    [Authorize(Roles = SD.Role_Admin)]
+    [Area(SD.Roles.Admin)]
+    [Authorize(Roles = SD.Roles.Admin)]
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

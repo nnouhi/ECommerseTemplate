@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ECommerseTemplate.Areas.Admin.Controllers
 {
-    [Area(SD.Role_Admin)]
+    [Area(SD.Roles.Admin)]
     //[Authorize(Roles = SD.Role_Admin)]
     public class CompanyController : Controller
     {

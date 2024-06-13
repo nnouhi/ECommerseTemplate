@@ -21,5 +21,36 @@ namespace ECommerseTemplate.DataAccess.Repository
         {
             _db.Update(orderHeader);
         }
-    }
+
+		public void UpdateStatus(int id, string orderStatus, string? paymentStatus = null)
+		{
+            OrderHeader orderHeader = _db.OrderHeaders.FirstOrDefault(oh => oh.Id == id);
+            if (orderHeader is not null)
+            {
+                orderHeader.OrderStatus = orderStatus;
+                if (!string.IsNullOrEmpty(paymentStatus))
+                {
+                    orderHeader.PaymentStatus = paymentStatus;
+                }
+			}
+		}
+
+		public void UpdateStripePaymentId(int id, string sessionId, string paymentIntentId)
+		{
+			OrderHeader orderHeader = _db.OrderHeaders.FirstOrDefault(oh => oh.Id == id);
+			if (orderHeader is not null)
+			{
+                if (!string.IsNullOrEmpty(sessionId))
+                { 
+                    orderHeader.SessionId = sessionId;
+                }
+
+				if (!string.IsNullOrEmpty(paymentIntentId))
+				{
+					orderHeader.PaymentIntentId = paymentIntentId;
+                    orderHeader.PaymentDate = DateTime.Now;
+				}
+			}
+		}
+	}
 }
