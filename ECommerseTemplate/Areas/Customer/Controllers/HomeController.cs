@@ -7,8 +7,8 @@ using System.Security.Claims;
 
 namespace ECommerseTemplate.Areas.Customer.Controllers
 {
-	[Area("Customer")]
-	public class HomeController : Controller
+    [Area("Customer")]
+    public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
@@ -21,13 +21,24 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
+            ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
+            Claim claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            // If the user is logged in populate the shopping cart count
+            if (claim is not null)
+            {
+                string userId = claim.Value;
+                IEnumerable<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(sc => sc.ApplicationUserId == userId, includeProperties: "Product");
+                HttpContext.Session.SetInt32(SD.SessionKeys.NumOfShoppingCarts, shoppingCarts.Count());
+            }
+
             IEnumerable<Product> products = _unitOfWork.Product.GetAll(includeProperties: "Category");
             return View(products);
         }
 
         public IActionResult Details(int id)
         {
-            Product product = _unitOfWork.Product.Get(u => u.Id == id,includeProperties: "Category");
+            Product product = _unitOfWork.Product.Get(u => u.Id == id, includeProperties: "Category");
             ShoppingCart shoppingCart = new ShoppingCart() { Product = product, Count = 1, ProductId = id };
             return View(shoppingCart);
         }
@@ -54,7 +65,7 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
                 shoppingCart.Id = 0;
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
             }
-           
+
             _unitOfWork.Save();
             TempData["Success"] = "Added to shopping cart succussfuly";
             return RedirectToAction(nameof(Index));

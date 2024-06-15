@@ -41,6 +41,7 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 				cart.Price = GetPriceBasedOnQuantity(cart);
 				shoppingCartViewModel.OrderHeader.OrderTotal += (cart.Price * cart.Count);
 			}
+
 			return View(shoppingCartViewModel);
 		}
 
@@ -176,6 +177,7 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 
 			return RedirectToAction(nameof(OrderConfirmation), new { id = shoppingCartViewModel.OrderHeader.Id });
 		}
+
 		public IActionResult OrderConfirmation(int id)
 		{
 			OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(oh => oh.Id == id, includeProperties: "ApplicationUser");
@@ -210,7 +212,8 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 		public IActionResult Minus(int cartId)
 		{
 			ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
-			if (cartFromDb.Count <= 1)
+			bool removeItemFromCart = cartFromDb.Count <= 1;
+			if (removeItemFromCart)
 			{
 				_unitOfWork.ShoppingCart.Remove(cartFromDb);
 			}
@@ -219,8 +222,13 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 				cartFromDb.Count -= 1;
 				_unitOfWork.ShoppingCart.Update(cartFromDb);
 			}
-
 			_unitOfWork.Save();
+
+			// Item's quantity is < 0 after the minus operation. Remove it from the users cart
+			if (removeItemFromCart)
+			{
+				UpdateShoppingCartCount();
+			}
 			return RedirectToAction(nameof(Index));
 		}
 
@@ -229,9 +237,20 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 			ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
 			_unitOfWork.ShoppingCart.Remove(cartFromDb);
 			_unitOfWork.Save();
+
+			// Item is completely removed from the user's cart
+			UpdateShoppingCartCount();
 			return RedirectToAction(nameof(Index));
 		}
 		#endregion
+
+		private void UpdateShoppingCartCount()
+		{
+			ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
+			string userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+			int numOfShoppingCarts = _unitOfWork.ShoppingCart.GetAll(sc => sc.ApplicationUserId == userId).Count();
+			HttpContext.Session.SetInt32(SD.SessionKeys.NumOfShoppingCarts, numOfShoppingCarts);
+		}
 
 		private float GetPriceBasedOnQuantity(ShoppingCart cart)
 		{

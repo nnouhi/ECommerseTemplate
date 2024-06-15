@@ -10,7 +10,7 @@ using System.Security.Claims;
 namespace ECommerseTemplate.Areas.Admin.Controllers
 {
 	[Area(SD.Roles.Admin)]
-	[Authorize]
+	[Authorize(Roles = SD.Roles.Admin)]
 	public class OrderController : Controller
 	{
 		private readonly IUnitOfWork _unitOfWork;

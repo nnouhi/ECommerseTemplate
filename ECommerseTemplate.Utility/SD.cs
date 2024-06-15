@@ -40,4 +40,9 @@
 	{
 		public const string ApplicationMode = "Development";
 	}
+
+	public static class SessionKeys
+	{
+		public const string NumOfShoppingCarts = "NumOfShoppingCarts";
+	}
 }
