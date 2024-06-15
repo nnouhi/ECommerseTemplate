@@ -208,7 +208,14 @@ namespace ECommerseTemplate.Areas.Identity.Pages.Account
 					}
 					else
 					{
-						await _signInManager.SignInAsync(user, isPersistent: false);
+						if (User.IsInRole(SD.Roles.Admin))
+						{
+							TempData["succuss"] = "New User Created Succussfully";
+						}
+						else
+						{
+							await _signInManager.SignInAsync(user, isPersistent: false);
+						}
 						return LocalRedirect(returnUrl);
 					}
 				}

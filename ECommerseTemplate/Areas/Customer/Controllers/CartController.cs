@@ -194,6 +194,7 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 					IEnumerable<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(sc => sc.ApplicationUserId == orderHeader.ApplicationUserId);
 					_unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
 					_unitOfWork.Save();
+					HttpContext.Session.Clear();
 				}
 			}
 			return View(id);
