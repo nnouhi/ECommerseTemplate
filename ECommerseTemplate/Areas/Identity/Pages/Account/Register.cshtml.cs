@@ -210,7 +210,7 @@ namespace ECommerseTemplate.Areas.Identity.Pages.Account
 					{
 						if (User.IsInRole(SD.Roles.Admin))
 						{
-							TempData["succuss"] = "New User Created Succussfully";
+							TempData["succuss"] = "New User Created Succussfully!";
 						}
 						else
 						{
