@@ -1,6 +1,4 @@
-﻿using Microsoft.CodeAnalysis.Elfie.Diagnostics;
-
-public static class SD
+﻿public static class SD
 {
 	public static class Roles
 	{
@@ -18,6 +16,7 @@ public static class SD
 		public const string Shipped = "Shipped";
 		public const string Cancelled = "Cancelled";
 		public const string Refunded = "Refunded";
+		public const string Completed = "Completed";
 	}
 
 	public static class PaymentStatuses
@@ -26,6 +25,8 @@ public static class SD
 		public const string Approved = "Approved";
 		public const string DelayedPayment = "ApprovedForDelayedPayment";
 		public const string Rejected = "Rejected";
+		public const string Refunded = "Refunded";
+		public const string Cancelled = "Cancelled";
 	}
 
 

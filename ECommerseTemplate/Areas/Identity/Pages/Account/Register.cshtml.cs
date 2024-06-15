@@ -121,8 +121,9 @@ namespace ECommerseTemplate.Areas.Identity.Pages.Account
             public string StreetAddress { get; set; }
 
             public string City { get; set; }
-            [Display(Name = "Postal Code")]
+            public string Country { get; set; }
 
+            [Display(Name = "Postal Code")]
             public string PostalCode { get; set; }
 
             [Display(Name = "Phone Number")]
@@ -179,6 +180,7 @@ namespace ECommerseTemplate.Areas.Identity.Pages.Account
                     user.StreetAddress = Input.StreetAddress;
                     user.PostalCode = Input.PostalCode;
                     user.City = Input.City;
+                    user.Country = Input.Country;
                     user.PhoneNumber = Input.PhoneNumber;
 
                     if (Input.Role == SD.Roles.Company)
