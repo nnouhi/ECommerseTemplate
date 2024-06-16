@@ -1,4 +1,5 @@
 using ECommerseTemplate.DataAccess.Data;
+using ECommerseTemplate.DataAccess.DbInitializer;
 using ECommerseTemplate.DataAccess.Repository;
 using ECommerseTemplate.DataAccess.Repository.IRepository;
 using ECommerseTemplate.Utility;
@@ -38,6 +39,7 @@ builder.Services.AddSession(options =>
 });
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 // Add CORS policy
@@ -67,9 +69,19 @@ app.UseAuthentication();
 app.UseCors("CorsPolicy");
 app.UseAuthorization();
 app.UseSession();
+SeedDatabase();
 app.MapRazorPages();
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+void SeedDatabase()
+{
+	using (var scope = app.Services.CreateScope())
+	{
+		var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+		dbInitializer.Initialize();
+	}
+}

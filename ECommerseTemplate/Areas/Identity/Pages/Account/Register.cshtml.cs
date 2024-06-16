@@ -128,16 +128,6 @@ namespace ECommerseTemplate.Areas.Identity.Pages.Account
 
 		public async Task OnGetAsync(string returnUrl = null)
 		{
-			// NOTE: Can also use if (!_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult()) {}
-			bool roleExists = await _roleManager.RoleExistsAsync(SD.Roles.Admin);
-			if (!roleExists)
-			{
-				await _roleManager.CreateAsync(new IdentityRole(SD.Roles.Admin));
-				await _roleManager.CreateAsync(new IdentityRole(SD.Roles.Employee));
-				await _roleManager.CreateAsync(new IdentityRole(SD.Roles.Company));
-				await _roleManager.CreateAsync(new IdentityRole(SD.Roles.Customer));
-			}
-
 			Input = new InputModel
 			{
 				RoleList = _roleManager.Roles.Select(role => new SelectListItem
