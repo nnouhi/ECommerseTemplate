@@ -1,17 +1,42 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using System.Net;
+using System.Net.Mail;
 
 namespace ECommerseTemplate.Utility
 {
-    public class EmailSender : IEmailSender
-    {
-        public Task SendEmailAsync(string email, string subject, string htmlMessage)
-        {
-            return Task.CompletedTask;
-        }
-    }
+	public class EmailSender : IEmailSender
+	{
+		private readonly IConfiguration _config;
+
+		public EmailSender(IConfiguration config)
+		{
+			_config = config;
+		}
+
+		public Task SendEmailAsync(string email, string subject, string htmlMessage)
+		{
+			string senderEmail = _config.GetValue<string>("Outlook:Email");
+			string senderPassword = _config.GetValue<string>("Outlook:Password");
+
+			var client = new SmtpClient("smtp.office365.com", 587)
+			{
+				EnableSsl = true,
+				UseDefaultCredentials = false,
+				Credentials = new NetworkCredential(senderEmail, senderPassword)
+			};
+
+			var mailMessage = new MailMessage
+			{
+				From = new MailAddress(senderEmail),
+				Subject = subject,
+				Body = htmlMessage,
+				IsBodyHtml = true
+			};
+
+			mailMessage.To.Add(email);
+
+			return client.SendMailAsync(mailMessage);
+		}
+	}
 }

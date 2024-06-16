@@ -2,6 +2,7 @@
 using ECommerseTemplate.Models;
 using ECommerseTemplate.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Stripe.Checkout;
 using System.Security.Claims;
@@ -12,10 +13,12 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 	public class CartController : Controller
 	{
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IEmailSender _emailSender;
 
-		public CartController(IUnitOfWork unitOfWork)
+		public CartController(IUnitOfWork unitOfWork, IEmailSender emailSender)
 		{
 			_unitOfWork = unitOfWork;
+			_emailSender = emailSender;
 		}
 
 		[Authorize]
@@ -195,6 +198,13 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 					_unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
 					_unitOfWork.Save();
 					HttpContext.Session.Clear();
+
+					// Send order confirmation email
+					_emailSender.SendEmailAsync(
+						orderHeader.ApplicationUser.Email,
+						"ECommerseTemplate - We Received Your Order!",
+						$"<p>New Order Created - {orderHeader.Id}</p>"
+						).GetAwaiter().GetResult();
 				}
 			}
 			return View(id);
