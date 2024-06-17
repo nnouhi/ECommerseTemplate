@@ -10,6 +10,7 @@
     <Content Remove="wwwroot\js\company.js" />
     <Content Remove="wwwroot\js\order.js" />
     <Content Remove="wwwroot\js\Product.js" />
+    <Content Remove="wwwroot\js\user.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -85,6 +86,7 @@
     <None Include="Areas\Identity\Pages\_ViewStart.cshtml" />
     <None Include="wwwroot\js\order.js" />
     <None Include="wwwroot\js\company.js" />
+    <None Include="wwwroot\js\user.js" />
     <None Include="wwwroot\js\product.js" />
   </ItemGroup>
 
