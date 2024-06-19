@@ -61,7 +61,6 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
                 TempData["error"] = "Model state is not valid";
                 return RedirectToAction(nameof(Index));
             }
-
             try
             {
                 ApplicationUser user = _db.ApplicationUsers.FirstOrDefault(u => u.Id == roleManagementVM.User.Id);
