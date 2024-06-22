@@ -1,5 +1,5 @@
 ﻿using ECommerseTemplate.DataAccess.Data;
-using ECommerseTemplate.DataAccess.Repository.IRepository;
+using ECommerseTemplate.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -49,6 +49,29 @@ public class Repository<T> : IRepository<T> where T : class
         }
 
         return query.FirstOrDefault();
+    }
+
+    public async Task<PaginatedList<T>> GetPaginated<TKey>(Expression<Func<T, TKey>> keySelector, int pageNumber, int pageSize, string? includeProperties = null)
+    {
+        IQueryable<T> query = dbSet;
+
+        if (!string.IsNullOrWhiteSpace(includeProperties))
+        {
+            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+        }
+
+        int count = await query.CountAsync();
+
+        List<T> items = await query
+            .OrderBy(keySelector)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedList<T>(items, pageNumber, pageSize, count);
     }
 
     public void Add(T entity)

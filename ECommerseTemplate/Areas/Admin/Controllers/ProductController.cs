@@ -1,7 +1,6 @@
 ﻿using ECommerseTemplate.DataAccess.Repository.IRepository;
 using ECommerseTemplate.Models;
 using ECommerseTemplate.Models.ViewModels;
-using ECommerseTemplate.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,7 +12,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-		private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
         public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment hostingEnvironment)
         {
@@ -96,10 +95,10 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
 
         #region API CALLS
         [HttpGet]
-		public IActionResult GetAll()
+        public IActionResult GetAll()
         {
             List<Product> products = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
-			return Json(new { data = products });
+            return Json(new { data = products });
         }
 
         [HttpDelete]
