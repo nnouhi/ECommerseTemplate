@@ -20,24 +20,21 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 			_unitOfWork = unitOfWork;
 		}
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index(int page = 1)
 		{
 			ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
 			Claim claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
 			// If the user is logged in populate the shopping cart count
-			if (claim is not null)
+			if (claim != null)
 			{
 				string userId = claim.Value;
 				IEnumerable<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(sc => sc.ApplicationUserId == userId, includeProperties: "Product");
 				HttpContext.Session.SetInt32(SD.SessionKeys.NumOfShoppingCarts, shoppingCarts.Count());
 			}
 
-			return RedirectToAction(nameof(Products));
-		}
-
-		public async Task<IActionResult> Products(int pageNumber = 1, int pageSize = 5)
-		{
+			int pageSize = 5; // This will be saved in the database in the future
+			int pageNumber = page;
 			var paginatedList = await _unitOfWork.Product.GetPaginated(p => p.Id, pageNumber, pageSize, includeProperties: "Category");
 			IPagedList<Product> products = new StaticPagedList<Product>(paginatedList.Items, pageNumber, pageSize, paginatedList.TotalItemCount);
 			return View(products);
