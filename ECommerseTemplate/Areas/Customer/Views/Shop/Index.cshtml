@@ -1,100 +1,91 @@
-﻿@model X.PagedList.IPagedList<Product>
+﻿@model ShopVM
 @using X.PagedList.Mvc.Core;
 
 <div class="container">
-	<div class="d-flex align-items-center justify-content-between mb-2">
-		<div class="me-auto mt-auto">
-			<nav aria-label="breadcrumb">
-				<ol class="breadcrumb-no-bg mb-0">
-					<li class="breadcrumb-item">
-						<a asp-action="Index" asp-controller="Home" class="on-hover-link">
-							HOME
-						</a>
-					</li>
-					<li class="breadcrumb-item">
-						<span class="fw-bold">
-							SHOP ALL
-						</span>
-					</li>
-				</ol>
-			</nav>
-		</div>
-		<div class="me-3">
-			<p class="m-auto mb-0">
-				Showing items @Model.FirstItemOnPage to @Model.LastItemOnPage of @Model.TotalItemCount
-			</p>
-		</div>
-		<div>
-			<ul class="nav nav-tabs" role="tablist">
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-					<div class="dropdown-menu">
-						<a class="dropdown-item" href="#">Sort by price: low to high</a>
-						<a class="dropdown-item" href="#">Sort by price: high to low</a>
-					</div>
-				</li>
-			</ul>
-		</div>
-	</div>
-	<div class="row pb-3">
-		@* Left Side *@
-		<div class="col-lg-2 ">
-		</div>
-		@* Right Side *@
-		<div class="col-lg-10">
-			<div class="row">
-				@foreach (var product in Model)
-				{
-					<div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-						<div class="card border-0 p-3 shadow border-top border-5 rounded h-100">
-							<img src="~/@product.ImageUrl" class="card-img-top rounded" />
-							<div class="card-body pb-0">
-								<div class="pl-1">
-									<p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.Title</p>
-									<p class="card-title text-warning text-center">by <b>@product.Author</b></p>
-								</div>
-								<div class="pl-1">
-									<p class="text-dark text-opacity-75 text-center mb-0">
-										List Price:
-										<span class="text-decoration-line-through">
-											@product.ListPrice.ToString("c")
-										</span>
-									</p>
-								</div>
-								<div class="pl-1">
-									<p class="text-dark text-opacity-75 text-center">
-										As low as:
-										<span>
-											@product.Price100.ToString("c")
-										</span>
-									</p>
-								</div>
-							</div>
-							<div class="mt-auto">
-								<a asp-action="Details" asp-route-id="@product.Id" class="btn btn-primary bg-gradient border-0 form-control">
-									Details
-								</a>
-							</div>
-						</div>
-					</div>
-				}
-			</div>
-		</div>
-	</div>
+    <div class="d-flex align-items-center justify-content-between mb-2">
+        <div class="me-auto mt-auto">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb-no-bg mb-0">
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index" asp-controller="Home" class="on-hover-link">HOME</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <span class="fw-bold">SHOP ALL</span>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        <div class="me-3">
+            <p class="m-auto mb-0">
+                Showing items @Model.productsPagedList.FirstItemOnPage to @Model.productsPagedList.LastItemOnPage of @Model.productsPagedList.TotalItemCount
+            </p>
+        </div>
+        <div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item dropdown">
+                    <a id="dropdownMenuButton" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    @Model.OrderByDisplayText
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item @(Model.OrderBy == "date" ? "disabled" : "")" asp-action="Index" asp-route-orderby="date">Sort by latest</a>
+                        <a class="dropdown-item @(Model.OrderBy == "price" ? "disabled" : "")" asp-action="Index" asp-route-orderby="price">Sort by price: low to high</a>
+                        <a class="dropdown-item @(Model.OrderBy == "price-desc" ? "disabled" : "")" asp-action="Index" asp-route-orderby="price-desc">Sort by price: high to low</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row pb-3">
+        @* Left Side *@
+        <div class="col-lg-2">
+        </div>
+        @* Right Side *@
+        <div class="col-lg-10">
+            <div class="row">
+                @foreach (var product in Model.productsPagedList)
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+                        <div class="card border-0 p-3 shadow border-top border-5 rounded h-100">
+                            <img src="~/@product.ImageUrl" class="card-img-top rounded" />
+                            <div class="card-body pb-0">
+                                <div class="pl-1">
+                                    <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.Title</p>
+                                    <p class="card-title text-warning text-center">by <b>@product.Author</b></p>
+                                </div>
+                                <div class="pl-1">
+                                    <p class="text-dark text-opacity-75 text-center mb-0">
+                                        List Price:
+                                        <span class="text-decoration-line-through">@product.ListPrice.ToString("c")</span>
+                                    </p>
+                                </div>
+                                <div class="pl-1">
+                                    <p class="text-dark text-opacity-75 text-center">As low as: <span>@product.Price100.ToString("c")</span></p>
+                                </div>
+                            </div>
+                            <div class="mt-auto">
+                                <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-primary bg-gradient border-0 form-control">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 
-	<!-- Paging Links -->
-	<div class="d-flex flex-column align-items-center">
-		<div>
-			@Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions
-{
-	ContainerDivClasses = new[] { "navigation" },
-	LiElementClasses = new[] { "page-item" },
-	PageClasses = new[] { "page-link" },
-	DisplayLinkToFirstPage = PagedListDisplayMode.Always,
-	DisplayLinkToLastPage = PagedListDisplayMode.Always,
-	DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
-	DisplayLinkToNextPage = PagedListDisplayMode.Always
-})
-		</div>
-	</div>
+    <!-- Paging Links -->
+    <div class="d-flex flex-column align-items-center">
+        <div>
+            @Html.PagedListPager(Model.productsPagedList, page => Url.Action("Index", new { page = page, orderby = Model.OrderBy }), new PagedListRenderOptions
+       {
+           ContainerDivClasses = new[] { "navigation" },
+           LiElementClasses = new[] { "page-item" },
+           PageClasses = new[] { "page-link" },
+           DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+           DisplayLinkToLastPage = PagedListDisplayMode.Always,
+           DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+           DisplayLinkToNextPage = PagedListDisplayMode.Always
+       })
+        </div>
+    </div>
 </div>
+

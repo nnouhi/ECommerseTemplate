@@ -6,7 +6,6 @@ $(document).ready(function () {
     var status = urlParams.get('status');
 
     loadDataTable(status);
-
 });
 
 function loadDataTable(status) {
