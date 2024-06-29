@@ -1,91 +1,182 @@
 ﻿@model ShopVM
-@using X.PagedList.Mvc.Core;
+@using X.PagedList.Mvc.Core
+
 
 <div class="container">
-    <div class="d-flex align-items-center justify-content-between mb-2">
-        <div class="me-auto mt-auto">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb-no-bg mb-0">
-                    <li class="breadcrumb-item">
-                        <a asp-action="Index" asp-controller="Home" class="on-hover-link">HOME</a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <span class="fw-bold">SHOP ALL</span>
-                    </li>
-                </ol>
-            </nav>
-        </div>
-        <div class="me-3">
-            <p class="m-auto mb-0">
-                Showing items @Model.productsPagedList.FirstItemOnPage to @Model.productsPagedList.LastItemOnPage of @Model.productsPagedList.TotalItemCount
-            </p>
-        </div>
-        <div>
-            <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item dropdown">
-                    <a id="dropdownMenuButton" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    @Model.OrderByDisplayText
-                    </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item @(Model.OrderBy == "date" ? "disabled" : "")" asp-action="Index" asp-route-orderby="date">Sort by latest</a>
-                        <a class="dropdown-item @(Model.OrderBy == "price" ? "disabled" : "")" asp-action="Index" asp-route-orderby="price">Sort by price: low to high</a>
-                        <a class="dropdown-item @(Model.OrderBy == "price-desc" ? "disabled" : "")" asp-action="Index" asp-route-orderby="price-desc">Sort by price: high to low</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="row pb-3">
-        @* Left Side *@
-        <div class="col-lg-2">
-        </div>
-        @* Right Side *@
-        <div class="col-lg-10">
-            <div class="row">
-                @foreach (var product in Model.productsPagedList)
-                {
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-                        <div class="card border-0 p-3 shadow border-top border-5 rounded h-100">
-                            <img src="~/@product.ImageUrl" class="card-img-top rounded" />
-                            <div class="card-body pb-0">
-                                <div class="pl-1">
-                                    <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.Title</p>
-                                    <p class="card-title text-warning text-center">by <b>@product.Author</b></p>
-                                </div>
-                                <div class="pl-1">
-                                    <p class="text-dark text-opacity-75 text-center mb-0">
-                                        List Price:
-                                        <span class="text-decoration-line-through">@product.ListPrice.ToString("c")</span>
-                                    </p>
-                                </div>
-                                <div class="pl-1">
-                                    <p class="text-dark text-opacity-75 text-center">As low as: <span>@product.Price100.ToString("c")</span></p>
-                                </div>
-                            </div>
-                            <div class="mt-auto">
-                                <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-primary bg-gradient border-0 form-control">Details</a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
+	<div class="d-flex align-items-center justify-content-between mb-2">
+		<div class="me-auto mt-auto">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb-no-bg mb-0">
+					<li class="breadcrumb-item">
+						<a asp-action="Index" asp-controller="Home" class="on-hover-link">HOME</a>
+					</li>
+					<li class="breadcrumb-item">
+						<span class="fw-bold">SHOP ALL</span>
+					</li>
+				</ol>
+			</nav>
+		</div>
+		<div class="me-3">
+			<p class="m-auto mb-0">
+				Showing items @Model.ProductsPagedList.FirstItemOnPage to @Model.ProductsPagedList.LastItemOnPage of @Model.ProductsPagedList.TotalItemCount
+			</p>
+		</div>
+		<div>
+			<ul class="nav nav-tabs" role="tablist">
+				<li class="nav-item dropdown">
+					<a id="dropdownMenuButton" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+						@Model.OrderByDisplayText
+					</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item @(Model.OrderBy == "date" ? "disabled" : "")" href="@GenerateURL(urlFor:"orderby", orderby: "date", page: Model.ProductsPagedList.PageNumber)">
+							Sort by latest
+						</a>
+						<a class="dropdown-item @(Model.OrderBy == "price" ? "disabled" : "")" href="@GenerateURL(urlFor:"orderby", orderby: "price", page: Model.ProductsPagedList.PageNumber)">
+							Sort by price: low to high
+						</a>
+						<a class="dropdown-item @(Model.OrderBy == "price-desc" ? "disabled" : "")" href="@GenerateURL(urlFor:"orderby", orderby: "price-desc", page: Model.ProductsPagedList.PageNumber)">
+							Sort by price: high to low
+						</a>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="row pb-3">
+		@* Left Side *@
+		<div class="col-lg-3">
+			<form asp-action="Index" method="get" asp-controller="Shop" class="mb-4">
+				<div id="price-slider" style="width: 100%; margin: 20px 0;"></div>
 
-    <!-- Paging Links -->
-    <div class="d-flex flex-column align-items-center">
-        <div>
-            @Html.PagedListPager(Model.productsPagedList, page => Url.Action("Index", new { page = page, orderby = Model.OrderBy }), new PagedListRenderOptions
-       {
-           ContainerDivClasses = new[] { "navigation" },
-           LiElementClasses = new[] { "page-item" },
-           PageClasses = new[] { "page-link" },
-           DisplayLinkToFirstPage = PagedListDisplayMode.Always,
-           DisplayLinkToLastPage = PagedListDisplayMode.Always,
-           DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
-           DisplayLinkToNextPage = PagedListDisplayMode.Always
-       })
-        </div>
-    </div>
+				<div class="d-flex justify-content-between align-items-center">
+					<input type="submit" value="Filter" class="btn btn-primary" />
+					<div id="price-slider-value">
+						Price: €@Model.PostMinPrice - €@Model.PostMaxPrice
+					</div>
+					<input type="hidden" name="minprice" id="min-input-value" value="@Model.PostMinPrice" />
+					<input type="hidden" name="maxprice" id="max-input-value" value="@Model.PostMaxPrice" />
+					@* If there is an order by, include it as a hidden input *@
+					@if (!string.IsNullOrEmpty(Model.OrderBy))
+					{
+						<input type="hidden" name="orderBy" value="@Model.OrderBy" />
+					}
+				</div>
+			</form>
+		</div>
+		@* Right Side *@
+		<div class="col-lg-9">
+			<div class="row">
+				@foreach (var product in Model.ProductsPagedList)
+				{
+					<div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+						<div class="card border-0 p-3 shadow border-top border-5 rounded h-100">
+							<img src="~/@product.ImageUrl" class="card-img-top rounded" />
+							<div class="card-body pb-0">
+								<div class="pl-1">
+									<p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.Title</p>
+									<p class="card-title text-warning text-center">by <b>@product.Author</b></p>
+								</div>
+								<div class="pl-1">
+									<p class="text-dark text-opacity-75 text-center mb-0">
+										List Price:
+										<span class="text-decoration-line-through">@product.ListPrice.ToString("c")</span>
+									</p>
+								</div>
+								<div class="pl-1">
+									<p class="text-dark text-opacity-75 text-center">As low as: <span>@product.Price100.ToString("c")</span></p>
+								</div>
+							</div>
+							<div class="mt-auto">
+								<a asp-action="Details" asp-route-id="@product.Id" class="btn btn-primary bg-gradient border-0 form-control">Details</a>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+
+	<!-- Paging Links -->
+	<div class="d-flex flex-column align-items-center">
+		<div>
+			@Html.PagedListPager(Model.ProductsPagedList, page => GenerateURL(urlFor: "page", orderby: Model.OrderBy, page: page),
+							new PagedListRenderOptions
+			{
+				ContainerDivClasses = new[] { "navigation" },
+				LiElementClasses = new[] { "page-item" },
+				PageClasses = new[] { "page-link" },
+				DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+				DisplayLinkToLastPage = PagedListDisplayMode.Always,
+				DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+				DisplayLinkToNextPage = PagedListDisplayMode.Always
+			})
+		</div>
+	</div>
 </div>
+@{
+	// This method handles the generation of the URL for the paging, price filtering and ordering
+	// It includes and excluded certain parameters based on the current state of the page
+	string GenerateURL(string urlFor, string orderby = "", int page = 1)
+	{
+		Dictionary<string, object> urlParams = new Dictionary<string, object>();
+		if (urlFor == "orderby")
+		{
+			urlParams.Add("orderby", orderby);	
+			if (page != 1)
+			{
+				urlParams.Add("page", page);
+			}
+		}
+		else if (urlFor == "page")
+		{
+			urlParams.Add("page", page);
+			if (Model.OrderBy != "")
+			{
+				urlParams.Add("orderby", Model.OrderBy);
+			}
+		}
 
+		if (Model.PostMaxPrice != Model.MaxSliderPrice || Model.PostMinPrice != Model.MinSliderPrice)
+		{
+			urlParams.Add("minprice", Model.PostMinPrice);
+			urlParams.Add("maxprice", Model.PostMaxPrice);
+		}
+		return Url.Action("Index", "Shop", urlParams);
+
+	}
+}
+@section Scripts {
+	<script type="text/javascript">
+		var minPrice = @Model.PostMinPrice; // Initial minimum price based on posted values
+		var maxPrice = @Model.PostMaxPrice; // Initial maximum price based on posted values
+		const cStep = 10;
+
+		function SetSlider() {
+			// Display the minimum and maximum values
+			$("#price-slider-value").html("Price: €" + minPrice + " - €" + maxPrice);
+
+			// Initialize the slider.
+			$("#price-slider").slider({
+				range: true,
+				min: @Model.MinSliderPrice,
+				max: @Model.MaxSliderPrice,
+				step: cStep,
+				values: [minPrice, maxPrice], // Set initial values from Model.PostMinPrice and Model.PostMaxPrice
+				stop: function (event, ui) {
+					var start = parseInt(ui.values[0]);
+					var end = parseInt(ui.values[1]);
+					$("#min-input-value").val(start);
+					$("#max-input-value").val(end);
+					$("#price-slider-value").html("Price: €" + start + " - €" + end);
+				},
+				slide: function (event, ui) {
+					$("#price-slider-value").html("Price: €" + ui.values[0] + " - €" + ui.values[1]);
+				}
+			});
+		}
+
+		$(function () {
+			SetSlider();
+		});
+	</script>
+}
