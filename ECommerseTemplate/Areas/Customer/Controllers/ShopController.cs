@@ -38,18 +38,17 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 			var paginatedList = await GetPaginatedList(page, pageSize, orderby, minPrice, maxPrice);
 			IPagedList<Product> productsPagedList = new StaticPagedList<Product>(paginatedList.Items, page, pageSize, paginatedList.TotalItemCount);
 			List<float> prices = _unitOfWork.Product.GetAll().Select(p => p.Price).ToList();
-			int minSliderMinPrice = (int)prices.Min();
-			int maxSliderMaxPrice = (int)prices.Max();
+			int minSliderPrice = (int)prices.Min();
+			int maxSliderPrice = (int)prices.Max();
 			// If no values provided by the user, default to the slider values which is the min and max ranges
-			int postMinPrice = minPrice == 0 || maxPrice == int.MaxValue ? minSliderMinPrice : minPrice;
-			int postMaxPrice = minPrice == 0 || maxPrice == int.MaxValue ? maxSliderMaxPrice : maxPrice;
-
+			int postMinPrice = minPrice != 0 ? minPrice : minSliderPrice;
+			int postMaxPrice = maxPrice != int.MaxValue ? maxPrice : maxSliderPrice;
 			ShopVM shopVM = new ShopVM()
 			{
 				OrderBy = orderby,
 				ProductsPagedList = productsPagedList,
-				MinSliderPrice = minSliderMinPrice,
-				MaxSliderPrice = maxSliderMaxPrice,
+				MinSliderPrice = minSliderPrice,
+				MaxSliderPrice = maxSliderPrice,
 				PostMinPrice = postMinPrice,
 				PostMaxPrice = postMaxPrice
 			};

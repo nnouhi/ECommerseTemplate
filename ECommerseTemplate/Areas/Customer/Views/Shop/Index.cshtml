@@ -3,7 +3,7 @@
 
 
 <div class="container">
-	<div class="d-flex align-items-center justify-content-between mb-2">
+	<div class="d-flex align-items-center justify-content-between mb-5">
 		<div class="me-auto mt-auto">
 			<nav aria-label="breadcrumb">
 				<ol class="breadcrumb-no-bg mb-0">
@@ -45,23 +45,51 @@
 	<div class="row pb-3">
 		@* Left Side *@
 		<div class="col-lg-3">
-			<form asp-action="Index" method="get" asp-controller="Shop" class="mb-4">
-				<div id="price-slider" style="width: 100%; margin: 20px 0;"></div>
-
-				<div class="d-flex justify-content-between align-items-center">
-					<input type="submit" value="Filter" class="btn btn-primary" />
-					<div id="price-slider-value">
-						Price: €@Model.PostMinPrice - €@Model.PostMaxPrice
+			@if (Model.PostMaxPrice != Model.MaxSliderPrice || Model.PostMinPrice != Model.MinSliderPrice)
+			{
+				<div class="mb-5">
+					<p class="fw-bold">ACTIVE FILTERS</p>
+					<hr style="width: 25%; border-color: #192E2F; border-width: 2px;">
+					<div class="d-flex gap-2">
+						@if (Model.PostMinPrice != Model.MinSliderPrice)
+						{
+							<a class="btn btn-primary" href="@GenerateURL(urlFor: "clear-min-price", orderby: Model.OrderBy)">
+								<i class="bi bi-x"></i>
+								Min: €@Model.PostMinPrice
+							</a>
+						}
+						@if (Model.PostMaxPrice != Model.MaxSliderPrice)
+						{
+							<a class="btn btn-primary" href="@GenerateURL(urlFor: "clear-max-price", orderby: Model.OrderBy)">
+								<i class="bi bi-x"></i>
+								Max: €@Model.PostMaxPrice
+							</a>
+						}
 					</div>
-					<input type="hidden" name="minprice" id="min-input-value" value="@Model.PostMinPrice" />
-					<input type="hidden" name="maxprice" id="max-input-value" value="@Model.PostMaxPrice" />
-					@* If there is an order by, include it as a hidden input *@
-					@if (!string.IsNullOrEmpty(Model.OrderBy))
-					{
-						<input type="hidden" name="orderBy" value="@Model.OrderBy" />
-					}
 				</div>
-			</form>
+			}
+			<div>
+				<p class="fw-bold">FILTER BY PRICE</p>
+				<hr style="width: 25%; border-color: #192E2F; border-width: 2px;">
+			</div>
+			<div>
+				<form asp-action="Index" method="get" asp-controller="Shop" class="mb-4">
+					<div id="price-slider" style="width: 100%; margin: 20px 0;"></div>
+					<div class="d-flex justify-content-between align-items-center">
+						<input type="submit" value="Filter" class="btn btn-primary" />
+						<div id="price-slider-value">
+							Price: €@Model.PostMinPrice - €@Model.PostMaxPrice
+						</div>
+						<input type="hidden" name="minprice" id="min-input-value" value="@Model.PostMinPrice" />
+						<input type="hidden" name="maxprice" id="max-input-value" value="@Model.PostMaxPrice" />
+						@* If there is an order by, include it as a hidden input *@
+						@if (!string.IsNullOrEmpty(Model.OrderBy))
+						{
+							<input type="hidden" name="orderBy" value="@Model.OrderBy" />
+						}
+					</div>
+				</form>
+			</div>
 		</div>
 		@* Right Side *@
 		<div class="col-lg-9">
@@ -136,13 +164,57 @@
 			}
 		}
 
-		if (Model.PostMaxPrice != Model.MaxSliderPrice || Model.PostMinPrice != Model.MinSliderPrice)
+		if (urlFor == "clear-min-price" || urlFor == "clear-max-price")
 		{
-			urlParams.Add("minprice", Model.PostMinPrice);
-			urlParams.Add("maxprice", Model.PostMaxPrice);
-		}
-		return Url.Action("Index", "Shop", urlParams);
+			if (urlFor == "clear-min-price")
+			{
+				// If there was a max filter before, add it back
+				bool wasPriceFilteredBefore = Model.PostMaxPrice != Model.MaxSliderPrice;
+				if (wasPriceFilteredBefore)
+				{
+					urlParams.Add("maxprice", Model.PostMaxPrice);
+				}
 
+				// Remove the filter
+				if (urlParams.ContainsKey("minprice"))
+				{
+					urlParams.Remove("minprice");
+				}
+			}
+			else if (urlFor == "clear-max-price")
+			{
+				bool wasPriceFilteredBefore = Model.PostMinPrice != Model.MinSliderPrice;
+				if (wasPriceFilteredBefore)
+				{
+					urlParams.Add("minprice", Model.PostMinPrice);
+				}
+				if (urlParams.ContainsKey("maxprice"))
+				{
+					urlParams.Remove("maxprice");
+				}
+			}
+
+			if (Model.OrderBy != "")
+			{
+				urlParams.Add("orderby", Model.OrderBy);
+			}
+		}
+		else
+		{
+			bool wasMaxPriceFilteredBefore = Model.PostMaxPrice != Model.MaxSliderPrice;
+			bool wasMinPriceFilteredBefore = Model.PostMinPrice != Model.MinSliderPrice;
+			if (wasMaxPriceFilteredBefore)
+			{
+				urlParams.Add("maxprice", Model.PostMaxPrice);
+			}
+
+			if (wasMinPriceFilteredBefore)
+			{
+				urlParams.Add("minprice", Model.PostMinPrice);
+			}
+		}
+
+		return Url.Action("Index", "Shop", urlParams);
 	}
 }
 @section Scripts {
