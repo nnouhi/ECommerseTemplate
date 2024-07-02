@@ -45,4 +45,9 @@
 	{
 		public const string NumOfShoppingCarts = "NumOfShoppingCarts";
 	}
+
+	public static class CookieKeys
+	{
+		public const string RecentlyViewedProductIds = "RecentlyViewedProductIds";
+	}
 }
