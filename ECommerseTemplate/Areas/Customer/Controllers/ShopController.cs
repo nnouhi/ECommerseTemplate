@@ -4,6 +4,7 @@ using ECommerseTemplate.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using X.PagedList;
 
@@ -21,7 +22,7 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<IActionResult> Index(int page = 1, string orderby = "", int minPrice = 0, int maxPrice = int.MaxValue) // Change default values in the future
+		public async Task<IActionResult> Index(int page = 1, string orderby = "", string searchbyname = "", int minPrice = 0, int maxPrice = int.MaxValue) // Change default values in the future
 		{
 			ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
 			Claim claim = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier);
@@ -35,7 +36,7 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 			}
 
 			int pageSize = 5; // This will be saved in the database in the future
-			var paginatedList = await GetPaginatedList(page, pageSize, orderby, minPrice, maxPrice);
+			var paginatedList = await GetPaginatedList(page, pageSize, orderby, minPrice, maxPrice, searchbyname);
 			IPagedList<Product> productsPagedList = new StaticPagedList<Product>(paginatedList.Items, page, pageSize, paginatedList.TotalItemCount);
 			List<Product> recentlyViewedProducts = GetRecentlyViewedProducts();
 			List<float> prices = _unitOfWork.Product.GetAll().Select(p => p.Price).ToList();
@@ -53,7 +54,8 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 				MaxSliderPrice = maxSliderPrice,
 				PostMinPrice = postMinPrice,
 				PostMaxPrice = postMaxPrice,
-				RecentlyViewedProducts = recentlyViewedProducts
+				RecentlyViewedProducts = recentlyViewedProducts,
+				SearchByName = searchbyname
 			};
 
 			return View(shopVM);
@@ -101,47 +103,54 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 			return RedirectToAction(nameof(Index));
 		}
 
-		private Task<PaginatedList<Product>> GetPaginatedList(int page, int pageSize, string orderBy, int minPrice, int maxPrice)
+		private Task<PaginatedList<Product>> GetPaginatedList(int page, int pageSize, string orderBy, int minPrice, int maxPrice, string searchbyname)
 		{
-			// No filtering by price, no need to generate a custom set based on price filter
-			if (minPrice == 0 && maxPrice == int.MaxValue)
+			// Start with getting all products including category
+			IQueryable<Product> productSet = _unitOfWork.Product.GetAll(includeProperties: "Category");
+
+			// Apply filter by name if searchbyname is provided
+			if (!string.IsNullOrEmpty(searchbyname))
 			{
-				// For now we only have support for ordering by price and id (date added I guess)
-				if (orderBy == "price" || orderBy == "price-desc")
-				{
-					bool isDescending = orderBy == "price-desc";
-					return _unitOfWork.Product.GetPaginated(p => p.Price, page, pageSize, includeProperties: "Category", descending: isDescending);
-				}
-				else if (orderBy == "date")
-				{
-					return _unitOfWork.Product.GetPaginated(p => p.DateAdded, page, pageSize, includeProperties: "Category", descending: true);
-				}
-				else
-				{
-					// Default is date for now
-					return _unitOfWork.Product.GetPaginated(p => p.DateAdded, page, pageSize, includeProperties: "Category", descending: true);
-				}
+				// Case insensitive search by product name
+				productSet = productSet.Where(p => p.Title.ToLower().Contains(searchbyname.ToLower()));
+			}
+
+			// Apply filtering by price range
+			if (minPrice > 0 || maxPrice < int.MaxValue)
+			{
+				productSet = productSet.Where(p => p.Price >= minPrice && p.Price <= maxPrice);
+			}
+
+			// Determine the sorting criteria
+			Expression<Func<Product, object>> orderByExpression = null;
+			bool descending = false;
+
+			if (orderBy == "price")
+			{
+				orderByExpression = p => p.Price;
+				descending = false;
+			}
+			else if (orderBy == "price-desc")
+			{
+				orderByExpression = p => p.Price;
+				descending = true;
+			}
+			else if (orderBy == "date")
+			{
+				orderByExpression = p => p.DateAdded;
+				descending = true;
 			}
 			else
 			{
-				IQueryable<Product> productSet = _unitOfWork.Product.GetAll(includeProperties: "Category").Where(p => p.Price >= minPrice && p.Price <= maxPrice);
-				// For now we only have support for ordering by price and id (date added I guess)
-				if (orderBy == "price" || orderBy == "price-desc")
-				{
-					bool isDescending = orderBy == "price-desc";
-					return _unitOfWork.Product.GetPaginated(productSet, p => p.Price, page, pageSize, includeProperties: "Category", descending: isDescending);
-				}
-				else if (orderBy == "date")
-				{
-					return _unitOfWork.Product.GetPaginated(productSet, p => p.DateAdded, page, pageSize, includeProperties: "Category", descending: true);
-				}
-				else
-				{
-					// Default is date for now
-					return _unitOfWork.Product.GetPaginated(productSet, p => p.DateAdded, page, pageSize, includeProperties: "Category", descending: true);
-				}
+				// Default sorting by date added descending
+				orderByExpression = p => p.DateAdded;
+				descending = true;
 			}
+
+			// Get paginated result based on the determined criteria
+			return _unitOfWork.Product.GetPaginated(productSet, orderByExpression, page, pageSize, includeProperties: "Category", descending: descending);
 		}
+
 
 		private void AddRecentViewedProductId(string productId)
 		{

@@ -45,6 +45,23 @@
 	<div class="row pb-3">
 		@* Left Side *@
 		<div class="col-lg-3">
+			@* Search Product *@
+			<div>
+				<p class="fw-bold">SEARCH PRODUCT</p>
+				<hr style="width: 25%; border-color: #192E2F; border-width: 2px;">
+			</div>
+			<div class="mb-5">
+				<form id="search-by-name-form" asp-action="Index" asp-controller="Shop" method="get" class="mb-2">
+					<div class="d-flex">
+						<input id="search-by-name-input" type="text" class="form-control" name="searchbyname" placeholder="Search by product name">
+						<button class="btn btn-primary" type="submit" id="button-addon2"><i class="bi bi-search"></i></button>
+					</div>
+				</form>
+				@if (!string.IsNullOrEmpty(Model.SearchByName))
+				{
+					<a asp-action="Index" asp-asp-controller="Shop" class="btn btn-primary">RESET FILTER</a>
+				}
+			</div>
 			@* Active Filters Section *@
 			@if (Model.PostMaxPrice != Model.MaxSliderPrice || Model.PostMinPrice != Model.MinSliderPrice)
 			{
@@ -248,6 +265,7 @@
 	}
 }
 @section Scripts {
+
 	<script type="text/javascript">
 		var minPrice = @Model.PostMinPrice; // Initial minimum price based on posted values
 		var maxPrice = @Model.PostMaxPrice; // Initial maximum price based on posted values
@@ -275,10 +293,28 @@
 					$("#price-slider-value").html("Price: €" + ui.values[0] + " - €" + ui.values[1]);
 				}
 			});
+
+			
 		}
+
+		function validateSearch() {
+			
+		}
+
 
 		$(function () {
 			SetSlider();
+		});
+
+		$('#search-by-name-form').on('submit', function () {
+			var searchValue = $('#search-by-name-input').val(); 
+			console.log(searchValue); 
+
+			if (searchValue === '') {	
+				return false; 
+			}
+
+			return true;
 		});
 	</script>
 }
