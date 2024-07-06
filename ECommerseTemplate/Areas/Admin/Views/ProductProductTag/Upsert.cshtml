@@ -1,0 +1,57 @@
+﻿@model ProductProductTagVM
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">@(Model.ProductProductTag.Id != 0 ? "Update" : "Create") Product-Tag Mapping</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="ProductProductTag.Id" hidden />
+            <div class="row">
+                <div class="col-10">
+                    <div class="border p-3">   
+                        <div class="form-floating py-2 col-12">
+                            <select asp-for="ProductProductTag.ProductId" asp-items="@Model.ProductList" class="form-select border-0 shadow">
+                                <option disabled selected>--Select Product--</option>
+                            </select>
+                            <label asp-for="ProductProductTag.ProductId" class="ms-2"></label>
+                            <span asp-validation-for="ProductProductTag.ProductId" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <select asp-for="ProductProductTag.ProductTagId" asp-items="@Model.ProductTagList" class="form-select border-0 shadow">
+                                <option disabled selected>--Select Product Tag--</option>
+                            </select>
+                            <label asp-for="ProductProductTag.ProductTagId" class="ms-2"></label>
+                            <span asp-validation-for="ProductProductTag.ProductTagId" class="text-danger"></span>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-6 col-md-3">
+                                <button type="submit" class="btn btn-primary form-control">@(Model.ProductProductTag.Id != 0 ? "Update" : "Create")</button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="ProductProductTag" asp-action="Index" class="btn btn-outline-primary border form-control">
+                                    Back to List
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        tinymce.init({
+            selector: '#tinymce',
+            plugins: 'lists link image table',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

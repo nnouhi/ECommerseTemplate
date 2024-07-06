@@ -29,7 +29,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
         // Choose between Update/Create a product
         public IActionResult Upsert(int? id)
         {
-            var categoryList = _unitOfWork.Category.GetAll()
+            IEnumerable<SelectListItem> categoryList = _unitOfWork.Category.GetAll()
                 .Select(u => new SelectListItem { Text = u.Name, Value = u.Id.ToString() });
 
             ProductVM productVM = new()
@@ -88,6 +88,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
             }
             else
             {
+                TempData["error"] = $"Product was not {(productVM.Product.Id == 0 ? "created" : "modified")}";
                 productVM.CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem { Text = u.Name, Value = u.Id.ToString() });
                 return View(productVM);
             }

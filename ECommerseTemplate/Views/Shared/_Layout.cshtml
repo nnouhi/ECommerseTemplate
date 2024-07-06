@@ -41,11 +41,14 @@
 								<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 									<a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">Categories</a>
 									<a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">Products</a>
-									<a class="dropdown-item" asp-area="Admin" asp-controller="Company" asp-action="Index">Company</a>
+									<a class="dropdown-item" asp-area="Admin" asp-controller="ProductTag" asp-action="Index">Product Tags</a>
+									<a class="dropdown-item" asp-area="Admin" asp-controller="ProductProductTag" asp-action="Index">Product-Tag Mappings</a>
+									<a class="dropdown-item" asp-area="Admin" asp-controller="Company" asp-action="Index">Companies</a>
 									<div class="dropdown-divider"></div>
-									<a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Register User</a>
-									<a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">Users</a>
+									<a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Register New User</a>
+									<a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">Manage Users</a>
 								</div>
+
 							</li>
 						}
 						<li class="nav-item">

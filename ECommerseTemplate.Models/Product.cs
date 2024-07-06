@@ -20,28 +20,27 @@ namespace ECommerseTemplate.Models
         public string Author { get; set; }
 
         [Required]
-        [DisplayName("List Price")]
+        [Display(Name = "List Price")]
         [Range(1, 1000)]
         public float ListPrice { get; set; }
 
         [Required]
-        [DisplayName("Price for 1-50")]
+        [Display(Name = "Price for 1-50")]
         [Range(1, 1000)]
         public float Price { get; set; }
 
         [Required]
-        [DisplayName("Price for 50+")]
+        [Display(Name = "Price for 50+")]
         [Range(1, 1000)]
         public float Price50 { get; set; }
 
         [Required]
-        [DisplayName("Price for 100+")]
+        [Display(Name = "Price for 100+")]
         [Range(1, 1000)]
         public float Price100 { get; set; }
 
-        public int CategoryId { get; set; }
-
         [DisplayName("Category")]
+        public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
         [ValidateNever]
         public Category Category { get; set; }
@@ -50,7 +49,7 @@ namespace ECommerseTemplate.Models
         public string ImageUrl { get; set; }
 
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime DateAdded { get; set; } = DateTime.Now;
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // The database generates a value when a row is inserted.
+        public DateTime DateAdded { get; set; }
     }
 }

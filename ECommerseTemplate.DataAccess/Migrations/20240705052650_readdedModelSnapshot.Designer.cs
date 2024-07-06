@@ -4,6 +4,7 @@ using ECommerseTemplate.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerseTemplate.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240705052650_readdedModelSnapshot")]
+    partial class readdedModelSnapshot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -705,29 +708,6 @@ namespace ECommerseTemplate.DataAccess.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ECommerseTemplate.Models.ProductProductTag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductTagId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductTagId");
-
-                    b.ToTable("ProductsProductTags");
-                });
-
             modelBuilder.Entity("ECommerseTemplate.Models.ProductTag", b =>
                 {
                     b.Property<int>("Id")
@@ -1043,25 +1023,6 @@ namespace ECommerseTemplate.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("ECommerseTemplate.Models.ProductProductTag", b =>
-                {
-                    b.HasOne("ECommerseTemplate.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ECommerseTemplate.Models.ProductTag", "ProductTag")
-                        .WithMany()
-                        .HasForeignKey("ProductTagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("ProductTag");
                 });
 
             modelBuilder.Entity("ECommerseTemplate.Models.ShoppingCart", b =>

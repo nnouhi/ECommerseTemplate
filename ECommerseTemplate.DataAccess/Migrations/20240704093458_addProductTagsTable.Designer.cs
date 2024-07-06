@@ -4,6 +4,7 @@ using ECommerseTemplate.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerseTemplate.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240704093458_addProductTagsTable")]
+    partial class addProductTagsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,7 +261,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 1,
                             Author = "Billy Spark",
                             CategoryId = 1,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7010),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "SWD9999001",
                             ImageUrl = "",
@@ -273,7 +276,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 2,
                             Author = "Nancy Hoover",
                             CategoryId = 2,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7056),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "CAW777777701",
                             ImageUrl = "",
@@ -288,7 +291,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 3,
                             Author = "Julian Button",
                             CategoryId = 3,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7059),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "RITO5555501",
                             ImageUrl = "",
@@ -303,7 +306,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 4,
                             Author = "Abby Muscles",
                             CategoryId = 2,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7062),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "WS3333333301",
                             ImageUrl = "",
@@ -318,7 +321,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 5,
                             Author = "Ron Parker",
                             CategoryId = 1,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7065),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "SOTJ1111111101",
                             ImageUrl = "",
@@ -333,7 +336,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 6,
                             Author = "Laura Phantom",
                             CategoryId = 2,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7069),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "FOT000000001",
                             ImageUrl = "",
@@ -348,7 +351,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 7,
                             Author = "Gina Harper",
                             CategoryId = 3,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7072),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "WHN8888888801",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -363,7 +366,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 8,
                             Author = "Sam Shadow",
                             CategoryId = 1,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7075),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "JTU1111111101",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -378,7 +381,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 9,
                             Author = "Claire Green",
                             CategoryId = 2,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7078),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "MR5555555501",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -393,7 +396,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 10,
                             Author = "Dylan Frost",
                             CategoryId = 3,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7081),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "EE9999999901",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -408,7 +411,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 11,
                             Author = "Nina Nocturne",
                             CategoryId = 1,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7083),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "SS2222222201",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -423,7 +426,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 12,
                             Author = "Ella Breeze",
                             CategoryId = 2,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7086),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "WC3333333301",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -438,7 +441,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 13,
                             Author = "Zachary Quill",
                             CategoryId = 3,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7089),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "TLE4444444401",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -453,7 +456,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 14,
                             Author = "Fiona Ranger",
                             CategoryId = 1,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7092),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "LW6666666601",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -468,7 +471,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 15,
                             Author = "Olivia Moon",
                             CategoryId = 2,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7094),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "BS7777777701",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -483,7 +486,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 16,
                             Author = "Hazel Wood",
                             CategoryId = 3,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7097),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "TSF8888888801",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -498,7 +501,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 17,
                             Author = "Leo Waters",
                             CategoryId = 2,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7099),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "WOT1111111101",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -513,7 +516,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 18,
                             Author = "Emily Quest",
                             CategoryId = 1,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7102),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "TLF9999999901",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -528,7 +531,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 19,
                             Author = "Ivy Shadow",
                             CategoryId = 3,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7104),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "COS2222222201",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -543,7 +546,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 20,
                             Author = "Oliver Tide",
                             CategoryId = 2,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7107),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "MOD5555555501",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -558,7 +561,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 21,
                             Author = "Sophia Ember",
                             CategoryId = 1,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7110),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "EOP6666666601",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -573,7 +576,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 22,
                             Author = "George Gale",
                             CategoryId = 3,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7113),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "WSP4444444401",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -588,7 +591,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 23,
                             Author = "Hannah Dawn",
                             CategoryId = 2,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7115),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "TM7777777701",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -603,7 +606,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 24,
                             Author = "Charles Blaze",
                             CategoryId = 1,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7118),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "FOA8888888801",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -618,7 +621,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 25,
                             Author = "Violet Ray",
                             CategoryId = 2,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7121),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "CTH9999999901",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -633,7 +636,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 26,
                             Author = "Isaac Story",
                             CategoryId = 3,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7123),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "TOU000000001",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -648,7 +651,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 27,
                             Author = "Lily Sands",
                             CategoryId = 1,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7126),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "THO2222222201",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -663,7 +666,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 28,
                             Author = "Daisy Field",
                             CategoryId = 3,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7128),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "WIW3333333301",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -678,7 +681,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 29,
                             Author = "Sebastian Dark",
                             CategoryId = 2,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7131),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "MN4444444401",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -693,7 +696,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Id = 30,
                             Author = "Aurora Skies",
                             CategoryId = 1,
-                            DateAdded = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateAdded = new DateTime(2024, 7, 4, 12, 34, 56, 906, DateTimeKind.Local).AddTicks(7133),
                             Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
                             ISBN = "WOS5555555501",
                             ImageUrl = "images\\product\\2f063d7d-daab-4a52-baf0-2eb02ff7b74b.jpg",
@@ -703,29 +706,6 @@ namespace ECommerseTemplate.DataAccess.Migrations
                             Price50 = 75f,
                             Title = "Wonders of the Sky"
                         });
-                });
-
-            modelBuilder.Entity("ECommerseTemplate.Models.ProductProductTag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductTagId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductTagId");
-
-                    b.ToTable("ProductsProductTags");
                 });
 
             modelBuilder.Entity("ECommerseTemplate.Models.ProductTag", b =>
@@ -1043,25 +1023,6 @@ namespace ECommerseTemplate.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("ECommerseTemplate.Models.ProductProductTag", b =>
-                {
-                    b.HasOne("ECommerseTemplate.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ECommerseTemplate.Models.ProductTag", "ProductTag")
-                        .WithMany()
-                        .HasForeignKey("ProductTagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("ProductTag");
                 });
 
             modelBuilder.Entity("ECommerseTemplate.Models.ShoppingCart", b =>
