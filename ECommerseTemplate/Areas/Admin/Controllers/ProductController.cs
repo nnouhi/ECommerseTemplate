@@ -29,15 +29,23 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
         // Choose between Update/Create a product
         public IActionResult Upsert(int? id)
         {
-            IEnumerable<SelectListItem> categoryList = _unitOfWork.Category.GetAll()
+            IEnumerable<SelectListItem> categoryListItem = _unitOfWork.Category.GetAll()
                 .Select(u => new SelectListItem { Text = u.Name, Value = u.Id.ToString() });
+            IEnumerable<SelectListItem> productTagListItem = _unitOfWork.ProductTag.GetAll()
+                .Select(pt => new SelectListItem { Text = pt.Name, Value = pt.Id.ToString() });
 
+
+            bool hasId = id.HasValue && id.Value != 0;
             ProductVM productVM = new()
             {
-                Product = id.HasValue && id.Value != 0
+                Product = hasId
                             ? _unitOfWork.Product.Get(u => u.Id == id.Value)
                             : new Product(),
-                CategoryList = categoryList,
+                CategoryList = categoryListItem,
+                ProductTagList = productTagListItem,
+                ProductTagIds = hasId
+                    ? _unitOfWork.ProductProductTag.GetAll(pt => pt.ProductId == id.Value).Select(pt => pt.ProductTagId).ToList()
+                    : new List<int>()
             };
 
             return View(productVM);
@@ -73,13 +81,37 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
                     productVM.Product.ImageUrl = Path.Combine("images", "product", fileName);
                 }
 
+
                 if (productVM.Product.Id == 0)
                 {
                     _unitOfWork.Product.Add(productVM.Product);
+                    _unitOfWork.Save();
+
+                    // After saving the product, we can get the new product id which will be populated
+                    int newProductId = productVM.Product.Id;
+                    foreach (int tagId in productVM.ProductTagIds)
+                    {
+                        _unitOfWork.ProductProductTag.Add(new ProductProductTag { ProductId = newProductId, ProductTagId = tagId });
+                    }
                 }
                 else
                 {
                     _unitOfWork.Product.Update(productVM.Product);
+                    _unitOfWork.Save();
+
+                    // Remove the existing tags
+                    List<ProductProductTag> existingTags = _unitOfWork.ProductProductTag.GetAll(pt => pt.ProductId == productVM.Product.Id).ToList();
+                    foreach (ProductProductTag existingTag in existingTags)
+                    {
+                        _unitOfWork.ProductProductTag.Remove(existingTag);
+                    }
+                    _unitOfWork.Save();
+
+                    // Add the new updated tags
+                    foreach (int tagId in productVM.ProductTagIds)
+                    {
+                        _unitOfWork.ProductProductTag.Add(new ProductProductTag { ProductId = productVM.Product.Id, ProductTagId = tagId });
+                    }
                 }
 
                 TempData["success"] = $"Product {(productVM.Product.Id == 0 ? "created" : "modified")} successfully";
@@ -89,8 +121,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
             else
             {
                 TempData["error"] = $"Product was not {(productVM.Product.Id == 0 ? "created" : "modified")}";
-                productVM.CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem { Text = u.Name, Value = u.Id.ToString() });
-                return View(productVM);
+                return RedirectToAction(nameof(Index));
             }
         }
 
@@ -115,6 +146,12 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
             if (System.IO.File.Exists(oldImagePath))
             {
                 System.IO.File.Delete(oldImagePath);
+            }
+
+            var productTagsToBeDeleted = _unitOfWork.ProductProductTag.GetAll(pt => pt.ProductId == id).ToList();
+            foreach (var productTag in productTagsToBeDeleted)
+            {
+                _unitOfWork.ProductProductTag.Remove(productTag);
             }
 
             _unitOfWork.Product.Remove(productToBeDeleted);
