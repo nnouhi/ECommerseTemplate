@@ -22,7 +22,7 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<IActionResult> Index(int page = 1, string orderby = "", string searchbyname = "", int minPrice = 0, int maxPrice = int.MaxValue) // Change default values in the future
+		public async Task<IActionResult> Index(int page = 1, string orderBy = "", string searchByName = "", string productTag = "", int minPrice = 0, int maxPrice = int.MaxValue) // Change default values in the future
 		{
 			ClaimsIdentity claimsIdentity = (ClaimsIdentity)User.Identity;
 			Claim claim = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier);
@@ -36,26 +36,28 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 			}
 
 			int pageSize = 5; // This will be saved in the database in the future
-			var paginatedList = await GetPaginatedList(page, pageSize, orderby, minPrice, maxPrice, searchbyname);
+
+			var paginatedList = await GetPaginatedList(page, pageSize, orderBy, productTag, minPrice, maxPrice, searchByName, out int minSliderPrice, out int maxSliderPrice);
 			IPagedList<Product> productsPagedList = new StaticPagedList<Product>(paginatedList.Items, page, pageSize, paginatedList.TotalItemCount);
 			List<Product> recentlyViewedProducts = GetRecentlyViewedProducts();
 			List<float> prices = _unitOfWork.Product.GetAll().Select(p => p.Price).ToList();
-			int minSliderPrice = (int)prices.Min();
-			int maxSliderPrice = (int)prices.Max();
+			List<ProductTag> productTags = _unitOfWork.ProductTag.GetAll().ToList();
 			// If no values provided by the user, default to the slider values which is the min and max ranges
 			int postMinPrice = minPrice != 0 ? minPrice : minSliderPrice;
 			int postMaxPrice = maxPrice != int.MaxValue ? maxPrice : maxSliderPrice;
 
 			ShopVM shopVM = new ShopVM()
 			{
-				OrderBy = orderby,
+				OrderBy = orderBy,
+				ProductTag = productTag,
 				ProductsPagedList = productsPagedList,
 				MinSliderPrice = minSliderPrice,
 				MaxSliderPrice = maxSliderPrice,
 				PostMinPrice = postMinPrice,
 				PostMaxPrice = postMaxPrice,
 				RecentlyViewedProducts = recentlyViewedProducts,
-				SearchByName = searchbyname
+				SearchByName = searchByName,
+				ProductTags = productTags
 			};
 
 			return View(shopVM);
@@ -103,10 +105,21 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 			return RedirectToAction(nameof(Index));
 		}
 
-		private Task<PaginatedList<Product>> GetPaginatedList(int page, int pageSize, string orderBy, int minPrice, int maxPrice, string searchbyname)
+		private Task<PaginatedList<Product>> GetPaginatedList(int page, int pageSize, string orderBy, string productTag, int minPrice, int maxPrice, string searchbyname, out int minSliderPrice, out int maxSliderPrice)
 		{
 			// Start with getting all products including category
 			IQueryable<Product> productSet = _unitOfWork.Product.GetAll(includeProperties: "Category");
+
+			// Apply filter by product tag if provided
+			if (!string.IsNullOrEmpty(productTag))
+			{
+				int productTagId = _unitOfWork.ProductTag.Get(pt => pt.Name == productTag).Id;
+				HashSet<int> productIdsWithTag = _unitOfWork.ProductProductTag
+													.GetAll(ppt => ppt.ProductTagId == productTagId)
+													.Select(ppt => ppt.ProductId)
+													.ToHashSet();
+				productSet = productSet.Where(p => productIdsWithTag.Contains(p.Id));
+			}
 
 			// Apply filter by name if searchbyname is provided
 			if (!string.IsNullOrEmpty(searchbyname))
@@ -114,6 +127,11 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 				// Case insensitive search by product name
 				productSet = productSet.Where(p => p.Title.ToLower().Contains(searchbyname.ToLower()));
 			}
+
+			// Based on the new sets calculated above, get the min and max prices for the slider
+			List<float> prices = productSet.Select(p => p.Price).ToList();
+			minSliderPrice = (int)prices.Min();
+			maxSliderPrice = (int)prices.Max();
 
 			// Apply filtering by price range
 			if (minPrice > 0 || maxPrice < int.MaxValue)
@@ -148,7 +166,18 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 			}
 
 			// Get paginated result based on the determined criteria
-			return _unitOfWork.Product.GetPaginated(productSet, orderByExpression, page, pageSize, includeProperties: "Category", descending: descending);
+			Task<PaginatedList<Product>> paginatedList = _unitOfWork.Product.GetPaginated(productSet, orderByExpression, page, pageSize, includeProperties: "Category", descending: descending);
+
+			// Populate the ProductTags field for each product
+			foreach (var product in paginatedList.Result.Items)
+			{
+				product.ProductTags = _unitOfWork.ProductProductTag
+					.GetAll(ppt => ppt.ProductId == product.Id)
+					.Select(ppt => ppt.ProductTag)
+					.ToList();
+			}
+
+			return paginatedList;
 		}
 
 

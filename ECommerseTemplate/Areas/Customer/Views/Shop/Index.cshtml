@@ -1,7 +1,6 @@
 ﻿@model ShopVM
 @using X.PagedList.Mvc.Core
 
-
 <div class="container">
 	<div class="d-flex flex-column flex-lg-row align-items-center justify-content-between mb-2 mb-lg-5">
 		<div class="mb-2 mb-lg-0">
@@ -26,13 +25,13 @@
 						@Model.OrderByDisplayText
 					</a>
 					<div class="dropdown-menu">
-						<a class="dropdown-item @(Model.OrderBy == "date" ? "disabled" : "")" href="@GenerateURL(urlFor:"orderby", orderby: "date", page: Model.ProductsPagedList.PageNumber)">
+						<a class="dropdown-item @(Model.OrderBy == "date" ? "disabled" : "")" href="@GenerateURL(urlFor:"orderBy", orderBy: "date", productTag: Model.ProductTag, page: Model.ProductsPagedList.PageNumber)">
 							Sort by latest
 						</a>
-						<a class="dropdown-item @(Model.OrderBy == "price" ? "disabled" : "")" href="@GenerateURL(urlFor:"orderby", orderby: "price", page: Model.ProductsPagedList.PageNumber)">
+						<a class="dropdown-item @(Model.OrderBy == "price" ? "disabled" : "")" href="@GenerateURL(urlFor:"orderBy", orderBy: "price" ,productTag: Model.ProductTag, page: Model.ProductsPagedList.PageNumber)">
 							Sort by price: low to high
 						</a>
-						<a class="dropdown-item @(Model.OrderBy == "price-desc" ? "disabled" : "")" href="@GenerateURL(urlFor:"orderby", orderby: "price-desc", page: Model.ProductsPagedList.PageNumber)">
+						<a class="dropdown-item @(Model.OrderBy == "price-desc" ? "disabled" : "")" href="@GenerateURL(urlFor:"orderBy", orderBy: "price-desc", productTag: Model.ProductTag, page: Model.ProductsPagedList.PageNumber)">
 							Sort by price: high to low
 						</a>
 					</div>
@@ -56,9 +55,9 @@
 							<hr style="width: 25%; border-color: #192E2F; border-width: 2px;">
 						</div>
 						<div class="mb-5">
-							<form id="search-by-name-form" asp-action="Index" asp-controller="Shop" method="get" class="mb-2">
+							<form id="searchByNameForm" asp-action="Index" asp-controller="Shop" method="get" class="mb-2">
 								<div class="d-flex">
-									<input id="search-by-name-input" type="text" class="form-control" name="searchbyname" placeholder="Search by product name">
+									<input id="searchByNameInput" type="text" class="form-control" name="searchByName" placeholder="Search by product name">
 									<button class="btn btn-primary" type="submit" id="button-addon2"><i class="bi bi-search"></i></button>
 								</div>
 							</form>
@@ -68,7 +67,7 @@
 							}
 						</div>
 						@* Active Filters Section *@
-						@if (Model.PostMaxPrice != Model.MaxSliderPrice || Model.PostMinPrice != Model.MinSliderPrice)
+						@if (Model.HasActiveFilters)
 						{
 							<div class="mb-5">
 								<p class="fw-bold">ACTIVE FILTERS</p>
@@ -76,16 +75,23 @@
 								<div class="d-flex gap-2">
 									@if (Model.PostMinPrice != Model.MinSliderPrice)
 									{
-										<a class="btn btn-primary" href="@GenerateURL(urlFor: "clear-min-price", orderby: Model.OrderBy)">
+										<a class="btn btn-primary" href="@GenerateURL(urlFor: "clearMinPrice", orderBy: Model.OrderBy, productTag: Model.ProductTag)">
 											<i class="bi bi-x"></i>
 											Min: €@Model.PostMinPrice
 										</a>
 									}
 									@if (Model.PostMaxPrice != Model.MaxSliderPrice)
 									{
-										<a class="btn btn-primary" href="@GenerateURL(urlFor: "clear-max-price", orderby: Model.OrderBy)">
+										<a class="btn btn-primary" href="@GenerateURL(urlFor: "clearMaxPrice", orderBy: Model.OrderBy, productTag: Model.ProductTag)">
 											<i class="bi bi-x"></i>
 											Max: €@Model.PostMaxPrice
+										</a>
+									}
+									@if (!string.IsNullOrEmpty(Model.ProductTag))
+									{
+										<a class="btn btn-primary" href="@GenerateURL(urlFor: "clearProductTag", orderBy: Model.OrderBy)">
+											<i class="bi bi-x"></i>
+											@Model.ProductTag
 										</a>
 									}
 								</div>
@@ -98,21 +104,38 @@
 						</div>
 						<div class="mb-5">
 							<form asp-action="Index" method="get" asp-controller="Shop" class="mb-4">
-								<div id="price-slider" style="width: 100%; margin: 20px 0;"></div>
+								<div id="priceSlider" style="width: 100%; margin: 20px 0;"></div>
 								<div class="d-flex justify-content-between align-items-center">
 									<input type="submit" value="Filter" class="btn btn-primary" />
-									<div id="price-slider-value">
+									<div id="priceSliderValue">
 										Price: €@Model.PostMinPrice - €@Model.PostMaxPrice
 									</div>
-									<input type="hidden" name="minprice" id="min-input-value" value="@Model.PostMinPrice" />
-									<input type="hidden" name="maxprice" id="max-input-value" value="@Model.PostMaxPrice" />
+									<input type="hidden" name="minPrice" id="minInputValue" value="@Model.PostMinPrice" />
+									<input type="hidden" name="maxPrice" id="maxInputValue" value="@Model.PostMaxPrice" />
 									@* If there is an order by, include it as a hidden input *@
 									@if (!string.IsNullOrEmpty(Model.OrderBy))
 									{
 										<input type="hidden" name="orderBy" value="@Model.OrderBy" />
 									}
+									@if (!string.IsNullOrEmpty(Model.ProductTag))
+									{
+										<input type="hidden" name="productTag" value="@Model.ProductTag" />
+									}
 								</div>
 							</form>
+						</div>
+						@* Product Tags *@
+						<div>
+							<p class="fw-bold">PRODUCT TAGS</p>
+							<hr style="width: 25%; border-color: #192E2F; border-width: 2px;">
+						</div>
+						<div class="mb-5">
+							@foreach (ProductTag productTag in Model.ProductTags)
+							{
+								<a class="btn btn-primary mb-2" href="@GenerateURL(urlFor: "productTag", orderBy: Model.OrderBy, productTag: @productTag.Name)">
+									@productTag.Name
+								</a>
+							}
 						</div>
 						@* Recently viewed products section *@
 						@if (Model.RecentlyViewedProducts.Count > 0)
@@ -143,7 +166,7 @@
 						}
 					</div>
 				</div>
-			</nav>	
+			</nav>
 		</div>
 		@* Right Side *@
 		<div class="col-lg-9">
@@ -155,6 +178,12 @@
 							<img src="~/@product.ImageUrl" class="card-img-top rounded" />
 							<div class="card-body pb-0">
 								<div class="pl-1">
+									<div class="d-flex justify-content-center flex-wrap">
+										@foreach (var tag in product.ProductTags)
+										{
+											<span class="badge bg-secondary m-1">@tag.Name</span>
+										}
+									</div>
 									<p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.Title</p>
 									<p class="card-title text-warning text-center">by <b>@product.Author</b></p>
 								</div>
@@ -181,7 +210,7 @@
 	<!-- Paging Links -->
 	<div class="d-flex flex-column align-items-center">
 		<div>
-			@Html.PagedListPager(Model.ProductsPagedList, page => GenerateURL(urlFor: "page", orderby: Model.OrderBy, page: page),
+			@Html.PagedListPager(Model.ProductsPagedList, page => GenerateURL(urlFor: "page", orderBy: Model.OrderBy, productTag: Model.ProductTag, page: page),
 							new PagedListRenderOptions
 			{
 				ContainerDivClasses = new[] { "navigation" },
@@ -196,61 +225,85 @@
 	</div>
 </div>
 @{
-	// This method handles the generation of the URL for the paging, price filtering and ordering
-	// It includes and excluded certain parameters based on the current state of the page
-	string GenerateURL(string urlFor, string orderby = "", int page = 1)
+	// This method handles the generation of the URL for the paging, price filtering, and ordering
+	// It includes and excludes certain parameters based on the current state of the page
+	string GenerateURL(string urlFor, string orderBy = "", string productTag = "", int page = 1)
 	{
 		Dictionary<string, object> urlParams = new Dictionary<string, object>();
-		if (urlFor == "orderby")
+		if (urlFor == "orderBy" || urlFor == "page")
 		{
-			urlParams.Add("orderby", orderby);
+			// Only add the necessary parameters
+			if (!string.IsNullOrEmpty(orderBy))
+			{
+				urlParams.Add("orderBy", orderBy);
+			}
 			if (page != 1)
 			{
 				urlParams.Add("page", page);
 			}
+			if (!string.IsNullOrEmpty(productTag))
+			{
+				urlParams.Add("productTag", productTag);
+			}
 		}
-		else if (urlFor == "page")
+		else if (urlFor == "productTag")
 		{
-			urlParams.Add("page", page);
+			urlParams.Add("productTag", productTag);
 			if (Model.OrderBy != "")
 			{
-				urlParams.Add("orderby", Model.OrderBy);
+				urlParams.Add("orderBy", Model.OrderBy);
 			}
 		}
 
-		if (urlFor == "clear-min-price" || urlFor == "clear-max-price")
+		if (urlFor == "clearMinPrice" || urlFor == "clearMaxPrice")
 		{
-			if (urlFor == "clear-min-price")
+			if (urlFor == "clearMinPrice")
 			{
 				// If there was a max filter before, add it back
 				bool wasPriceFilteredBefore = Model.PostMaxPrice != Model.MaxSliderPrice;
 				if (wasPriceFilteredBefore)
 				{
-					urlParams.Add("maxprice", Model.PostMaxPrice);
+					urlParams.Add("maxPrice", Model.PostMaxPrice);
 				}
 
 				// Remove the filter
-				if (urlParams.ContainsKey("minprice"))
+				if (urlParams.ContainsKey("minPrice"))
 				{
-					urlParams.Remove("minprice");
+					urlParams.Remove("minPrice");
 				}
 			}
-			else if (urlFor == "clear-max-price")
+			else if (urlFor == "clearMaxPrice")
 			{
 				bool wasPriceFilteredBefore = Model.PostMinPrice != Model.MinSliderPrice;
 				if (wasPriceFilteredBefore)
 				{
-					urlParams.Add("minprice", Model.PostMinPrice);
+					urlParams.Add("minPrice", Model.PostMinPrice);
 				}
-				if (urlParams.ContainsKey("maxprice"))
+				if (urlParams.ContainsKey("maxPrice"))
 				{
-					urlParams.Remove("maxprice");
+					urlParams.Remove("maxPrice");
 				}
 			}
 
-			if (Model.OrderBy != "")
+			// Add the paramaters that are not being cleared
+			if (!string.IsNullOrEmpty(orderBy))
 			{
-				urlParams.Add("orderby", Model.OrderBy);
+				urlParams.Add("orderBy", Model.OrderBy);
+			}
+			if (!string.IsNullOrEmpty(productTag))
+			{
+				urlParams.Add("productTag", productTag);
+			}
+		}
+		else if (urlFor == "clearProductTag")
+		{
+			if (urlParams.ContainsKey("productTag"))
+			{
+				urlParams.Remove("productTag");
+			}
+			if (!string.IsNullOrEmpty(orderBy))
+			{
+				urlParams.Add("orderBy", Model.OrderBy);
 			}
 		}
 		else
@@ -259,12 +312,12 @@
 			bool wasMinPriceFilteredBefore = Model.PostMinPrice != Model.MinSliderPrice;
 			if (wasMaxPriceFilteredBefore)
 			{
-				urlParams.Add("maxprice", Model.PostMaxPrice);
+				urlParams.Add("maxPrice", Model.PostMaxPrice);
 			}
 
 			if (wasMinPriceFilteredBefore)
 			{
-				urlParams.Add("minprice", Model.PostMinPrice);
+				urlParams.Add("minPrice", Model.PostMinPrice);
 			}
 		}
 
@@ -280,45 +333,40 @@
 
 		function SetSlider() {
 			// Display the minimum and maximum values
-			$("#price-slider-value").html("Price: €" + minPrice + " - €" + maxPrice);
+			$("#priceSliderValue").html("Price: €" + minPrice + " - €" + maxPrice);
 
 			// Initialize the slider.
-			$("#price-slider").slider({
+			$("#priceSlider").slider({
 				range: true,
 				min: @Model.MinSliderPrice,
 				max: @Model.MaxSliderPrice,
 				step: cStep,
-				values: [minPrice, maxPrice], // Set initial values from Model.PostMinPrice and Model.PostMaxPrice
+				values: [minPrice, maxPrice], // Set initial values from Model.postMinPrice and Model.postMaxPrice
 				stop: function (event, ui) {
 					var start = parseInt(ui.values[0]);
 					var end = parseInt(ui.values[1]);
-					$("#min-input-value").val(start);
-					$("#max-input-value").val(end);
-					$("#price-slider-value").html("Price: €" + start + " - €" + end);
+					$("#minInputValue").val(start);
+					$("#maxInputValue").val(end);
+					$("#priceSliderValue").html("Price: €" + start + " - €" + end);
 				},
 				slide: function (event, ui) {
-					$("#price-slider-value").html("Price: €" + ui.values[0] + " - €" + ui.values[1]);
+					$("#priceSliderValue").html("Price: €" + ui.values[0] + " - €" + ui.values[1]);
 				}
 			});
 
-			
-		}
 
-		function validateSearch() {
-			
 		}
-
 
 		$(function () {
 			SetSlider();
 		});
 
-		$('#search-by-name-form').on('submit', function () {
-			var searchValue = $('#search-by-name-input').val(); 
-			console.log(searchValue); 
+		$('#searchByNameForm').on('submit', function () {
+			var searchValue = $('#searchByNameInput').val();
+			console.log(searchValue);
 
-			if (searchValue === '') {	
-				return false; 
+			if (searchValue === '') {
+				return false;
 			}
 
 			return true;

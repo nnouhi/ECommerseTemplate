@@ -6,6 +6,7 @@ namespace ECommerseTemplate.Models.ViewModels
 	{
 		public string OrderBy { get; set; }
 		public string SearchByName { get; set; }
+		public string ProductTag { get; set; }
 		public IPagedList<Product> ProductsPagedList { get; set; }
 		public string OrderByDisplayText => GetDropdownValue(OrderBy);
 		// MinSliderPrice & MaxSliderPrice are used to set the range of the slider (based on db min - max product prices)
@@ -15,7 +16,8 @@ namespace ECommerseTemplate.Models.ViewModels
 		public int PostMinPrice { get; set; }
 		public int PostMaxPrice { get; set; }
 		public List<Product> RecentlyViewedProducts { get; set; }
-
+		public List<ProductTag> ProductTags { get; set; }
+		public bool HasActiveFilters => !string.IsNullOrEmpty(SearchByName) || PostMinPrice != MinSliderPrice || PostMaxPrice != MaxSliderPrice || !string.IsNullOrEmpty(ProductTag);
 
 		private string GetDropdownValue(string orderBy)
 		{
