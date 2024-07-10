@@ -1,11 +1,6 @@
 ﻿using ECommerseTemplate.DataAccess.Data;
 using ECommerseTemplate.DataAccess.Repository.IRepository;
 using ECommerseTemplate.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ECommerseTemplate.DataAccess.Repository
 {
@@ -31,7 +26,6 @@ namespace ECommerseTemplate.DataAccess.Repository
                 productFromDb.Author = product.Author;
                 productFromDb.Description = product.Description;
                 productFromDb.CategoryId = product.CategoryId;
-
                 if (product.ImageUrl != null)
                 {
                     productFromDb.ImageUrl = product.ImageUrl;

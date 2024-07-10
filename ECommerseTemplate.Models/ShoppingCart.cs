@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ECommerseTemplate.Models
 {
@@ -25,5 +20,7 @@ namespace ECommerseTemplate.Models
         public ApplicationUser? ApplicationUser { get; set; }
         [NotMapped]
         public float Price { get; set; }
+        [NotMapped]
+        public List<string> ProductImages { get; set; }
     }
 }
