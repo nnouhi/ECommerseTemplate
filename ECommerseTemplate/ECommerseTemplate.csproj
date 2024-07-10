@@ -10,6 +10,7 @@
     <Content Remove="wwwroot\js\company.js" />
     <Content Remove="wwwroot\js\order.js" />
     <Content Remove="wwwroot\js\Product.js" />
+    <Content Remove="wwwroot\js\productimage.js" />
     <Content Remove="wwwroot\js\productproducttag.js" />
     <Content Remove="wwwroot\js\producttag.js" />
     <Content Remove="wwwroot\js\user.js" />
@@ -91,6 +92,7 @@
     <None Include="wwwroot\js\order.js" />
     <None Include="wwwroot\js\company.js" />
     <None Include="wwwroot\js\productproducttag.js" />
+    <None Include="wwwroot\js\productimage.js" />
     <None Include="wwwroot\js\producttag.js" />
     <None Include="wwwroot\js\user.js" />
     <None Include="wwwroot\js\product.js" />

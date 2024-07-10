@@ -2,8 +2,8 @@
 
 namespace ECommerseTemplate.DataAccess.Repository.IRepository
 {
-	public interface IImageRepository : IRepository<Image>
+	public interface IProductImageRepository : IRepository<ProductImage>
 	{
-		void Update(Image image);
+		void Update(ProductImage image);
 	}
 }

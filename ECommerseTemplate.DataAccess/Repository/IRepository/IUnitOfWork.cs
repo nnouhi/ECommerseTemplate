@@ -11,7 +11,7 @@
 		IOrderDetailRepository OrderDetails { get; }
 		IProductTagRepository ProductTag { get; }
 		IProductProductTagRepository ProductProductTag { get; }
-		IImageRepository Image { get; }
+		IProductImageRepository ProductImage { get; }
 		void Save();
 	}
 }

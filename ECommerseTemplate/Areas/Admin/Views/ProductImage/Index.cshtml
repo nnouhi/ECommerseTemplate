@@ -1,0 +1,37 @@
+﻿@model List<ProductImage>
+<div class="card shadow border-0 my-4">
+	<div class="card-header bg-secondary bg-gradient ml-0 py-0">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h2 class="text-white py-2">Product Image List</h2>
+			</div>
+		</div>
+	</div>
+	<div class="card-body p-4">
+		<div class="row pb-3">
+			<div class="col-12 text-end">
+				<a asp-controller="ProductImage" asp-action="Upsert" class="btn btn-primary"><i class="bi bi-plus-square-fill"></i> Create New Product Image</a>
+			</div>
+		</div>
+		<table id="tblData" class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th>Image</th>
+					<th>Product</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</div>
+
+@section Scripts{
+	<script src="~/js/productimage.js"></script>
+}
+
+
+
+
+
+
+

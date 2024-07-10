@@ -14,7 +14,7 @@ namespace ECommerseTemplate.DataAccess.Repository
 		public IOrderDetailRepository OrderDetails { get; private set; }
 		public IProductTagRepository ProductTag { get; private set; }
 		public IProductProductTagRepository ProductProductTag { get; private set; }
-		public IImageRepository Image { get; private set; }
+		public IProductImageRepository ProductImage { get; private set; }
 
 		private readonly ApplicationDbContext _db;
 
@@ -30,7 +30,7 @@ namespace ECommerseTemplate.DataAccess.Repository
 			OrderDetails = new OrderDetailRepository(_db);
 			ProductTag = new ProductTagRepository(_db);
 			ProductProductTag = new ProductProductTagRepository(_db);
-			Image = new ImageRepository(_db);
+			ProductImage = new ProductImageRepository(_db);
 		}
 
 		public void Save()

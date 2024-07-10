@@ -98,7 +98,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                     b.ToTable("Companies");
                 });
 
-            modelBuilder.Entity("ECommerseTemplate.Models.Image", b =>
+            modelBuilder.Entity("ECommerseTemplate.Models.ProductImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1031,7 +1031,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
 
-            modelBuilder.Entity("ECommerseTemplate.Models.Image", b =>
+            modelBuilder.Entity("ECommerseTemplate.Models.ProductImage", b =>
                 {
                     b.HasOne("ECommerseTemplate.Models.Product", "Product")
                         .WithMany()

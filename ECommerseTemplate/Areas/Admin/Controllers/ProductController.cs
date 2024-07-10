@@ -54,6 +54,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Upsert(ProductVM productVM, IFormFile? file)
         {
+            bool isNewEntry = productVM.Product.Id == 0;
             if (ModelState.IsValid)
             {
                 // Handle file upload
@@ -81,8 +82,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
                     productVM.Product.ImageUrl = Path.Combine("images", "product", fileName);
                 }
 
-
-                if (productVM.Product.Id == 0)
+                if (isNewEntry)
                 {
                     _unitOfWork.Product.Add(productVM.Product);
                     _unitOfWork.Save();
@@ -114,13 +114,13 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
                     }
                 }
 
-                TempData["success"] = $"Product {(productVM.Product.Id == 0 ? "created" : "modified")} successfully";
+                TempData["success"] = $"Product {(isNewEntry ? "created" : "modified")} successfully";
                 _unitOfWork.Save();
                 return RedirectToAction(nameof(Index));
             }
             else
             {
-                TempData["error"] = $"Product was not {(productVM.Product.Id == 0 ? "created" : "modified")}";
+                TempData["error"] = $"Product was not {(isNewEntry ? "created" : "modified")}";
                 return RedirectToAction(nameof(Index));
             }
         }

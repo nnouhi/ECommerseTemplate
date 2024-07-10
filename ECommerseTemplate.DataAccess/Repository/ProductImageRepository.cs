@@ -4,15 +4,15 @@ using ECommerseTemplate.Models;
 
 namespace ECommerseTemplate.DataAccess.Repository
 {
-	public class ImageRepository : Repository<Image>, IImageRepository
+	public class ProductImageRepository : Repository<ProductImage>, IProductImageRepository
 	{
 		private readonly ApplicationDbContext _db;
-		public ImageRepository(ApplicationDbContext db) : base(db)
+		public ProductImageRepository(ApplicationDbContext db) : base(db)
 		{
 			_db = db;
 		}
 
-		public void Update(Image image)
+		public void Update(ProductImage image)
 		{
 			_db.Update(image);
 		}
