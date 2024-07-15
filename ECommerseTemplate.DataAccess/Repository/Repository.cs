@@ -6,17 +6,17 @@ using System.Linq.Expressions;
 public class Repository<T> : IRepository<T> where T : class
 {
     private readonly ApplicationDbContext _db;
-    internal DbSet<T> dbSet;
+    internal DbSet<T> _dbSet;
 
     public Repository(ApplicationDbContext db)
     {
         _db = db;
-        this.dbSet = _db.Set<T>();
+        _dbSet = _db.Set<T>();
     }
 
     public IQueryable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null, bool tracked = false)
     {
-        IQueryable<T> query = tracked ? dbSet : dbSet.AsNoTracking();
+        IQueryable<T> query = tracked ? _dbSet : _dbSet.AsNoTracking();
 
         if (filter != null)
         {
@@ -36,7 +36,7 @@ public class Repository<T> : IRepository<T> where T : class
 
     public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
     {
-        IQueryable<T> query = tracked ? dbSet : dbSet.AsNoTracking();
+        IQueryable<T> query = tracked ? _dbSet : _dbSet.AsNoTracking();
 
         query = query.Where(filter);
 
@@ -53,7 +53,7 @@ public class Repository<T> : IRepository<T> where T : class
 
     public async Task<PaginatedList<T>> GetPaginated<TKey>(Expression<Func<T, TKey>> keySelector, int pageNumber, int pageSize, string? includeProperties = null, bool descending = false)
     {
-        IQueryable<T> query = dbSet;
+        IQueryable<T> query = _dbSet;
         List<T> items;
         if (!string.IsNullOrWhiteSpace(includeProperties))
         {
@@ -120,16 +120,16 @@ public class Repository<T> : IRepository<T> where T : class
     }
     public void Add(T entity)
     {
-        dbSet.Add(entity);
+        _dbSet.Add(entity);
     }
 
     public void Remove(T entity)
     {
-        dbSet.Remove(entity);
+        _dbSet.Remove(entity);
     }
 
     public void RemoveRange(IEnumerable<T> entity)
     {
-        dbSet.RemoveRange(entity);
+        _dbSet.RemoveRange(entity);
     }
 }

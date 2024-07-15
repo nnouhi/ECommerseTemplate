@@ -1,52 +1,59 @@
-﻿@model ShoppingCart
+﻿@model ProductDetailsVM
+
 <style>
-/* Override some bootstrap code */
-.carousel-indicators {
-    position: relative;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    padding: 0;
-    margin-right: 15%;
-    margin-bottom: 1rem;
-    margin-left: 15%;
-}
+    /* Override some bootstrap code */
+    .carousel-indicators {
+        position: relative;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 2;
+        display: flex;
+        justify-content: center;
+        padding: 0;
+        margin-right: 15%;
+        margin-bottom: 1rem;
+        margin-left: 15%;
+    }
 
-.carousel-indicators [data-bs-target] {
-    box-sizing: content-box;
-    flex: 0 1 auto;
-    width: 120px;
-    height: 70px;
-    padding: 0;
-    margin-right: 3px;
-    margin-left: 3px;
-    text-indent: -999px;
-    cursor: pointer;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    transition: opacity 0.6s ease;
-}
+        .carousel-indicators [data-bs-target] {
+            box-sizing: content-box;
+            flex: 0 1 auto;
+            width: 120px;
+            height: 70px;
+            padding: 0;
+            margin-right: 3px;
+            margin-left: 3px;
+            text-indent: -999px;
+            cursor: pointer;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            transition: opacity 0.6s ease;
+        }
 
-.carousel-indicators .active img {
-    border: 3px solid #3e3f3a;
-    opacity: 1;
-}
+        .carousel-indicators .active img {
+            border: 3px solid #3e3f3a;
+            opacity: 1;
+        }
+
+    .review-image {
+        width: 100%;
+        max-width: 150px;
+        height: auto;
+    }
 </style>
 
-<form method="post">
-    <input hidden asp-for="ProductId" />
-    <div class="card shadow border-0 mt-4">
+<div class="card shadow border-0 mt-4">
+    <form method="post">
+        <input hidden asp-for="ShoppingCart.ProductId" />
         <div class="card-header bg-secondary bg-gradient text-light py-4">
             <div class="row">
                 <div class="col-12 text-center">
-                    <h3 class="text-white text-uppercase">@Model.Product.Title</h3>
-                    <p class="text-white-50 fw-semibold mb-0">@Model.Product.Author</p>
+                    <h3 class="text-white text-uppercase">@Model.ShoppingCart.Product.Title</h3>
+                    <p class="text-white-50 fw-semibold mb-0">@Model.ShoppingCart.Product.Author</p>
                 </div>
             </div>
         </div>
@@ -62,13 +69,13 @@
                 <div class="row">
                     <div class="col-12 col-lg-3 offset-lg-1 text-center mb-3">
                         @* If this product has more than many images display them all in a carousel *@
-                        @if (Model.ProductImages.Count > 0)
+                        @if (Model.ShoppingCart.ProductImages.Count > 0)
                         {
                             <div id='carousel-custom' class='carousel slide' data-ride='carousel'>
                                 <div class="carousel-inner">
                                     @{
                                         int i = 0;
-                                        foreach (string path in Model.ProductImages)
+                                        foreach (string path in Model.ShoppingCart.ProductImages)
                                         {
                                             if (i == 0)
                                             {
@@ -99,7 +106,7 @@
                                 <ol class="carousel-indicators mt-3">
                                     @{
                                         int j = 0;
-                                        foreach (string path in Model.ProductImages)
+                                        foreach (string path in Model.ShoppingCart.ProductImages)
                                         {
                                             <li type="button" data-bs-target="#carousel-custom" data-bs-slide-to="@j" class="@(j == 0 ? "active" : "")" aria-current="@(j == 0 ? "true" : "false")" aria-label="Slide @(j + 1)">
                                                 <img src="~/@path" class="d-block w-100 img-thumbnail" alt="Slide @(j + 1)" style="width: 120px; height: 70px;" />
@@ -112,21 +119,21 @@
                         }
                         else
                         {
-                            <img src="~/@Model.Product.ImageUrl" class="rounded d-block w-100" alt="Image" />
+                            <img src="~/@Model.ShoppingCart.Product.ImageUrl" class="rounded d-block w-100" alt="Image" />
                         }
                     </div>
                     <div class="col-12 col-lg-6 offset-lg-1">
                         <div class="col-12 col-md-6 pb-4">
-                            <span class="badge">@Model.Product.Category.Name</span>
+                            <span class="badge">@Model.ShoppingCart.Product.Category.Name</span>
                         </div>
                         <div class="row ps-2">
-                            <h6 class="text-dark text-opacity-50 ">@Model.Product.ISBN</h6>
+                            <h6 class="text-dark text-opacity-50 ">@Model.ShoppingCart.Product.ISBN</h6>
                         </div>
                         <div class="row ps-2">
                             <h6 class="text-dark text-opacity-50 pb-2">
                                 List Price:
                                 <span class="text-decoration-line-through">
-                                    @Model.Product.ListPrice.ToString("c")
+                                    @Model.ShoppingCart.Product.ListPrice.ToString("c")
                                 </span>
                             </h6>
                         </div>
@@ -149,17 +156,17 @@
                                 <div>Price</div>
                             </div>
                             <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
-                                <div>@Model.Product.Price.ToString("c")</div>
+                                <div>@Model.ShoppingCart.Product.Price.ToString("c")</div>
                             </div>
                             <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
-                                <div>@Model.Product.Price50.ToString("c")</div>
+                                <div>@Model.ShoppingCart.Product.Price50.ToString("c")</div>
                             </div>
                             <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
-                                <div>@Model.Product.Price100.ToString("c")</div>
+                                <div>@Model.ShoppingCart.Product.Price100.ToString("c")</div>
                             </div>
                         </div>
                         <div class="row pl-2 my-3">
-                            <p class="text-secondary lh-sm">@Html.Raw(Model.Product.Description)</p>
+                            <p class="text-secondary lh-sm">@Html.Raw(Model.ShoppingCart.Product.Description)</p>
                         </div>
                         <div class="row pl-2 mb-3">
                             <div class="col-md-4">
@@ -168,8 +175,7 @@
                                           id="inputGroup-sizing-default">
                                         Count
                                     </span>
-                                    <input asp-for="Count" type="number" value="1" class="form-control text-end" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" />
-
+                                    <input asp-for="ShoppingCart.Count" type="number" value="1" class="form-control text-end" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" />
                                 </div>
                             </div>
                         </div>
@@ -182,10 +188,140 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
 
+    @* Reviews Section  *@
+    <div class="card-body mt-4">
+        <h1 class="text-center">Reviews</h1>
+        <button id="button-collapse" class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#write-review" aria-expanded="false" aria-controls="write-review">
+            Write a review
+        </button>
+        <div class="collapse mb-2" id="write-review">
+            <div class="card card-body">
+                <form asp-action="Review" method="post" class="row" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Review.Name" class="form-control border-0 shadow" />
+                            <label asp-for="Review.Name" class="ms-2"></label>
+                            <span asp-validation-for="Review.Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Review.Email" class="form-control border-0 shadow" />
+                            <label asp-for="Review.Email" class="ms-2"></label>
+                            <span asp-validation-for="Review.Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <select asp-for="Review.Rating" class="form-control border-0 shadow">
+                                <option value="" disabled selected>Select rating</option>
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <option value="@i">@i Star@(i > 1 ? "s" : "")</option>
+                                }
+                            </select>
+                            <label asp-for="Review.Rating" class="ms-2"></label>
+                            <span asp-validation-for="Review.Rating" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Review.Title" class="form-control border-0 shadow" />
+                            <label asp-for="Review.Title" class="ms-2"></label>
+                            <span asp-validation-for="Review.Title" class="text-danger"></span>
+                        </div>
+                        <div class="py-2 col-12">
+                            <label asp-for="Review.Review" class="ms-2 text-muted"></label>
+                            <textarea asp-for="Review.Review" id="tinymce" class="form-control border-0 shadow"></textarea>
+                            <span asp-validation-for="Review.Review" class="text-danger"></span>
+                        </div>
+                        <div class="py-2 col-12">
+                            <label asp-for="Review.Images" class="ms-2 text-muted"></label>
+                            <input type="file" name="files" multiple class="form-control border-0 shadow" />
+                        </div>
+                        <div class="row pt-2">
+                            <p class="text-danger">Please note that your review will be visible to others once it has been reviewed and approved by an admin.</p>
+                            <div class="col-6 col-md-3">
+                                <button type="submit" class="btn btn-primary form-control">Submit Review</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="show-reviews">
+            @foreach (ProductReview review in Model.Reviews)
+            {
+                <div class="review mb-4 p-3 border rounded">
+                    <hr />
+                    @* Star ratings and date *@
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="ratings">
+                            @{
+                                int rating = review.Rating;
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    if (rating > 0)
+                                    {
+                                        <i class="bi bi-star-fill"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-star"></i>
+                                    }
+
+                                    rating--;
+                                }
+                            }
+                        </div>
+                        <div>
+                            <p class="mb-0">@review.DateAdded.ToShortDateString()</p>
+                        </div>
+                    </div>
+                    @* Verified status, name and country *@
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        @if (review.IsUserVerified)
+                        {
+                            <span class="badge bg-primary text-white">Verified</span>
+                        }
+                        <span>@review.Name</span>
+                        <span class="opacity-50">(@review.Country)</span>
+                    </div>
+                    <h4 class="mt-2">@review.Title</h4>
+                    <p>@review.Review</p>
+                    @* Show images if exist *@
+                    @if (review.Images.Count > 0)
+                    {
+                        <div class="d-flex gap-2 flex-wrap">
+                            @foreach (string path in review.Images)
+                            {
+                                <div class="review-image">
+                                    <img src="~/@path" class="review-image" alt="Image" />
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        tinymce.init({  
+            selector: '#tinymce',
+            plugins: 'lists link table',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+        });
+
+        $('#write-review').on('show.bs.collapse', function () {
+            $('#button-collapse').html('Cancel Review');
+        });
+
+        $('#write-review').on('hide.bs.collapse', function () {
+            $('#button-collapse').html('Write a review');
+        });
+    </script>
+}

@@ -4,6 +4,7 @@ using ECommerseTemplate.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerseTemplate.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240711140548_addProductReviewsTable")]
+    partial class addProductReviewsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -746,7 +749,7 @@ namespace ECommerseTemplate.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsAdminApproved")
+                    b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -772,28 +775,6 @@ namespace ECommerseTemplate.DataAccess.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductReviews");
-                });
-
-            modelBuilder.Entity("ECommerseTemplate.Models.ProductReviewImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProductReviewId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductReviewId");
-
-                    b.ToTable("ProductReviewImages");
                 });
 
             modelBuilder.Entity("ECommerseTemplate.Models.ProductTag", b =>
@@ -1152,17 +1133,6 @@ namespace ECommerseTemplate.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("ECommerseTemplate.Models.ProductReviewImage", b =>
-                {
-                    b.HasOne("ECommerseTemplate.Models.ProductReview", "ProductReview")
-                        .WithMany()
-                        .HasForeignKey("ProductReviewId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ProductReview");
                 });
 
             modelBuilder.Entity("ECommerseTemplate.Models.ShoppingCart", b =>

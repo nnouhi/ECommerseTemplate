@@ -84,6 +84,7 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
 
                 if (isNewEntry)
                 {
+                    productVM.Product.DateAdded = DateTime.Now;
                     _unitOfWork.Product.Add(productVM.Product);
                     _unitOfWork.Save();
 

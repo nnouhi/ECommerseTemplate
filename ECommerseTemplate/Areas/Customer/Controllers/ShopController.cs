@@ -78,10 +78,21 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
                 ProductId = id,
                 ProductImages = productImages
             };
+            List<ProductReview> reviews = _unitOfWork.ProductReview.GetAll(pr => pr.ProductId == id && pr.IsAdminApproved).ToList();
+            // Try get all related images of that review
+            foreach (ProductReview review in reviews)
+            {
+                review.Images = _unitOfWork.ProductReviewImage.GetAll(pri => pri.ProductReviewId == review.Id).Select(pri => pri.Path).ToList();
+            }
+            ProductDetailsVM productDetailsVM = new ProductDetailsVM()
+            {
+                ShoppingCart = shoppingCart,
+                Reviews = reviews
+            };
 
             // Add the product to the recently viewed products
             AddRecentViewedProductId(id.ToString());
-            return View(shoppingCart);
+            return View(productDetailsVM);
         }
 
         [HttpPost]
@@ -109,6 +120,12 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 
             _unitOfWork.Save();
             TempData["Success"] = "Added to shopping cart successfully";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public IActionResult Review(ProductDetailsVM productDetailsVM, List<IFormFile> files)
+        {
             return RedirectToAction(nameof(Index));
         }
 
@@ -186,7 +203,6 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
 
             return paginatedList;
         }
-
 
         private void AddRecentViewedProductId(string productId)
         {
