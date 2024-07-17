@@ -37,8 +37,10 @@ namespace ECommerseTemplate.Models
         public Product Product { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // The database generates a value when a row is inserted.
+        [ValidateNever]
         public DateTime DateAdded { get; set; }
 
+        [ValidateNever]
         public bool IsAdminApproved { get; set; } // An admin needs to approve of the review to be published
 
         [Display(Name = "Images (Use CTRL to select multiple images to upload)")]
@@ -47,9 +49,11 @@ namespace ECommerseTemplate.Models
         public List<string> Images { get; set; }
 
         [NotMapped]
+        [ValidateNever]
         public string Country { get; set; } // The country of the user that left the review
 
         [NotMapped]
+        [ValidateNever]
         public bool IsUserVerified { get; set; } // If the user is verified (If their email exists in our db)
     }
 }

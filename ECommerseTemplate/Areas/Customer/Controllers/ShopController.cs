@@ -4,7 +4,6 @@ using ECommerseTemplate.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Linq.Expressions;
 using System.Security.Claims;
 using X.PagedList;
 
@@ -15,11 +14,14 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
     {
         private readonly ILogger<ShopController> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        private int _pageSize = 5;
 
-        public ShopController(ILogger<ShopController> logger, IUnitOfWork unitOfWork)
+        public ShopController(ILogger<ShopController> logger, IUnitOfWork unitOfWork, IWebHostEnvironment hostingEnvironment)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public async Task<IActionResult> Index(int page = 1, string orderBy = "", string searchByName = "", string productTag = "", int minPrice = 0, int maxPrice = int.MaxValue) // Change default values in the future
@@ -35,10 +37,10 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
                 HttpContext.Session.SetInt32(SD.SessionKeys.NumOfShoppingCarts, shoppingCarts.Count());
             }
 
-            int pageSize = 5; // This will be saved in the database in the future
+            // This will be saved in the database in the future
 
-            var paginatedList = await GetPaginatedList(page, pageSize, orderBy, productTag, minPrice, maxPrice, searchByName, out int minSliderPrice, out int maxSliderPrice);
-            IPagedList<Product> productsPagedList = new StaticPagedList<Product>(paginatedList.Items, page, pageSize, paginatedList.TotalItemCount);
+            PaginatedList<Product> paginatedList = GetPaginatedItems(page, _pageSize, orderBy, productTag, minPrice, maxPrice, searchByName, out int minSliderPrice, out int maxSliderPrice);
+            IPagedList<Product> productsPagedList = new StaticPagedList<Product>(paginatedList.Items, page, _pageSize, paginatedList.TotalItemCount);
             List<Product> recentlyViewedProducts = GetRecentlyViewedProducts();
             List<float> prices = _unitOfWork.Product.GetAll().Select(p => p.Price).ToList();
             List<ProductTag> productTags = _unitOfWork.ProductTag.GetAll().ToList();
@@ -63,35 +65,100 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
             return View(shopVM);
         }
 
-        public IActionResult Details(int id)
+        public IActionResult Details(int id, int page = 1, string reviewFilter = "")
         {
+            // Fetch the product including its category
             Product product = _unitOfWork.Product.Get(u => u.Id == id, includeProperties: "Category");
             if (product == null)
             {
                 return NotFound();
             }
-            List<string> productImages = _unitOfWork.ProductImage.GetAll(pi => pi.ProductId == id).Select(pi => pi.Path).ToList();
-            ShoppingCart shoppingCart = new ShoppingCart()
+
+            // Fetch product images
+            List<string> productImages = _unitOfWork.ProductImage.GetAll(pi => pi.ProductId == id)
+                                                                  .Select(pi => pi.Path)
+                                                                  .ToList();
+
+            // Create the shopping cart
+            ShoppingCart shoppingCart = new ShoppingCart
             {
                 Product = product,
                 Count = 1,
-                ProductId = id,
                 ProductImages = productImages
             };
-            List<ProductReview> reviews = _unitOfWork.ProductReview.GetAll(pr => pr.ProductId == id && pr.IsAdminApproved).ToList();
-            // Try get all related images of that review
-            foreach (ProductReview review in reviews)
+
+            // Fetch and filter approved reviews
+            IQueryable<ProductReview> approvedReviewsQuery = _unitOfWork.ProductReview.GetAll(pr => pr.ProductId == id && pr.IsAdminApproved);
+            var ratingOverview = CalculateRatingMetrics(approvedReviewsQuery);
+            // Apply filter based on reviewFilter parameter
+            switch (reviewFilter.ToLower())
             {
-                review.Images = _unitOfWork.ProductReviewImage.GetAll(pri => pri.ProductReviewId == review.Id).Select(pri => pri.Path).ToList();
+                case "1-star":
+                case "2-star":
+                case "3-star":
+                case "4-star":
+                case "5-star":
+                    int rating = int.Parse(reviewFilter.Split('-')[0]);
+                    approvedReviewsQuery = approvedReviewsQuery.Where(pr => pr.Rating == rating);
+                    break;
+                case "latest":
+                    approvedReviewsQuery = approvedReviewsQuery.OrderByDescending(pr => pr.DateAdded);
+                    break;
+                case "oldest":
+                    approvedReviewsQuery = approvedReviewsQuery.OrderBy(pr => pr.DateAdded);
+                    break;
+                case "include-pictures":
+                    // Create a hash table to store reviews with at least one image
+                    var reviewsWithImages = _unitOfWork.ProductReviewImage
+                        .GetAll()
+                        .Select(pri => pri.ProductReviewId)
+                        .Distinct()
+                        .ToHashSet();
+                    approvedReviewsQuery = approvedReviewsQuery.Where(pr => reviewsWithImages.Contains(pr.Id));
+                    break;
+                case "highest-rating":
+                    approvedReviewsQuery = approvedReviewsQuery.OrderByDescending(pr => pr.Rating);
+                    break;
+                case "lowest-rating":
+                    approvedReviewsQuery = approvedReviewsQuery.OrderBy(pr => pr.Rating);
+                    break;
+                default:
+                    approvedReviewsQuery = approvedReviewsQuery.OrderByDescending(pr => pr.DateAdded);
+                    break;
             }
-            ProductDetailsVM productDetailsVM = new ProductDetailsVM()
+
+            // Paginate the filtered reviews
+            PaginatedList<ProductReview> paginatedReviews = _unitOfWork.ProductReview
+                                                                         .GetPaginated(approvedReviewsQuery, page, _pageSize)
+                                                                         .GetAwaiter()
+                                                                         .GetResult();
+
+            IPagedList<ProductReview> reviewsPagedList = new StaticPagedList<ProductReview>(paginatedReviews.Items, page, _pageSize, paginatedReviews.TotalItemCount);
+
+            // Process each review
+            foreach (ProductReview review in paginatedReviews.Items)
+            {
+                ApplicationUser user = _unitOfWork.ApplicationUser.Get(u => u.Email == review.Email);
+                review.Images = _unitOfWork.ProductReviewImage.GetAll(pri => pri.ProductReviewId == review.Id)
+                                                               .Select(pri => pri.Path)
+                                                               .ToList();
+                review.IsUserVerified = user != null;
+                review.Country = user != null ? user.Country : "Unknown";
+            }
+
+            // Create the view model
+            ProductDetailsVM productDetailsVM = new ProductDetailsVM
             {
                 ShoppingCart = shoppingCart,
-                Reviews = reviews
+                Reviews = reviewsPagedList,
+                ProductId = id,
+                RatingOverview = ratingOverview,
+                ReviewFilter = reviewFilter,
             };
 
-            // Add the product to the recently viewed products
+            // Add to recently viewed products
             AddRecentViewedProductId(id.ToString());
+
             return View(productDetailsVM);
         }
 
@@ -126,10 +193,54 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
         [HttpPost]
         public IActionResult Review(ProductDetailsVM productDetailsVM, List<IFormFile> files)
         {
+            ProductReview productReview = productDetailsVM.Review;
+            _unitOfWork.ProductReview.Add(productReview);
+            _unitOfWork.Save();
+
+            if (files.Count > 0)
+            {
+                string wwwRootPath = _hostingEnvironment.WebRootPath;
+                foreach (IFormFile file in files)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string productPath = Path.Combine(wwwRootPath, "images", "review", productReview.Id.ToString());
+
+                    // Ensure the directory exists
+                    if (!Directory.Exists(productPath))
+                    {
+                        Directory.CreateDirectory(productPath);
+                    }
+
+                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    ProductReviewImage productReviewImage = new ProductReviewImage()
+                    {
+                        Path = Path.Combine("images", "review", productReview.Id.ToString(), fileName),
+                        ProductReviewId = productReview.Id
+                    };
+
+                    _unitOfWork.ProductReviewImage.Add(productReviewImage);
+                    _unitOfWork.Save();
+                }
+            }
+
+            TempData["Success"] = "Review added successfully, your review will be visible to others once it has been reviewed and approved by an admin.";
             return RedirectToAction(nameof(Index));
         }
 
-        private Task<PaginatedList<Product>> GetPaginatedList(int page, int pageSize, string orderBy, string productTag, int minPrice, int maxPrice, string searchbyname, out int minSliderPrice, out int maxSliderPrice)
+        private PaginatedList<Product> GetPaginatedItems(
+            int page,
+            int pageSize,
+            string orderBy,
+            string productTag,
+            int minPrice,
+            int maxPrice,
+            string searchByName,
+            out int minSliderPrice,
+            out int maxSliderPrice)
         {
             // Start with getting all products including category
             IQueryable<Product> productSet = _unitOfWork.Product.GetAll(includeProperties: "Category");
@@ -139,23 +250,21 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
             {
                 int productTagId = _unitOfWork.ProductTag.Get(pt => pt.Name == productTag).Id;
                 HashSet<int> productIdsWithTag = _unitOfWork.ProductProductTag
-                                                    .GetAll(ppt => ppt.ProductTagId == productTagId)
-                                                    .Select(ppt => ppt.ProductId)
-                                                    .ToHashSet();
+                    .GetAll(ppt => ppt.ProductTagId == productTagId)
+                    .Select(ppt => ppt.ProductId)
+                    .ToHashSet();
                 productSet = productSet.Where(p => productIdsWithTag.Contains(p.Id));
             }
 
-            // Apply filter by name if searchbyname is provided
-            if (!string.IsNullOrEmpty(searchbyname))
+            // Apply filter by name if searchByName is provided
+            if (!string.IsNullOrEmpty(searchByName))
             {
-                // Case insensitive search by product name
-                productSet = productSet.Where(p => p.Title.ToLower().Contains(searchbyname.ToLower()));
+                productSet = productSet.Where(p => p.Title.Contains(searchByName, StringComparison.OrdinalIgnoreCase));
             }
 
-            // Based on the new sets calculated above, get the min and max prices for the slider
-            List<float> prices = productSet.Select(p => p.Price).ToList();
-            minSliderPrice = (int)prices.Min();
-            maxSliderPrice = (int)prices.Max();
+            // Calculate min and max slider prices
+            minSliderPrice = (int)productSet.Min(p => p.Price);
+            maxSliderPrice = (int)productSet.Max(p => p.Price);
 
             // Apply filtering by price range
             if (minPrice > 0 || maxPrice < int.MaxValue)
@@ -163,37 +272,31 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
                 productSet = productSet.Where(p => p.Price >= minPrice && p.Price <= maxPrice);
             }
 
-            // Determine the sorting criteria
-            Expression<Func<Product, object>> orderByExpression = null;
-            bool descending = false;
-
-            if (orderBy == "price")
+            // Determine sorting criteria
+            switch (orderBy.ToLower())
             {
-                orderByExpression = p => p.Price;
-                descending = false;
-            }
-            else if (orderBy == "price-desc")
-            {
-                orderByExpression = p => p.Price;
-                descending = true;
-            }
-            else if (orderBy == "date")
-            {
-                orderByExpression = p => p.DateAdded;
-                descending = true;
-            }
-            else
-            {
-                // Default sorting by date added descending
-                orderByExpression = p => p.DateAdded;
-                descending = true;
+                case "price":
+                    productSet = productSet.OrderBy(p => p.Price);
+                    break;
+                case "price-desc":
+                    productSet = productSet.OrderByDescending(p => p.Price);
+                    break;
+                case "date":
+                    productSet = productSet.OrderBy(p => p.DateAdded);
+                    break;
+                case "date-desc":
+                    productSet = productSet.OrderByDescending(p => p.DateAdded);
+                    break;
+                default:
+                    productSet = productSet.OrderByDescending(p => p.DateAdded);
+                    break;
             }
 
-            // Get paginated result based on the determined criteria
-            Task<PaginatedList<Product>> paginatedList = _unitOfWork.Product.GetPaginated(productSet, orderByExpression, page, pageSize, includeProperties: "Category", descending: descending);
+            // Get paginated result
+            PaginatedList<Product> paginatedList = _unitOfWork.Product.GetPaginated(productSet, page, pageSize).GetAwaiter().GetResult();
 
             // Populate the ProductTags field for each product
-            foreach (var product in paginatedList.Result.Items)
+            foreach (var product in paginatedList.Items)
             {
                 product.ProductTags = _unitOfWork.ProductProductTag
                     .GetAll(ppt => ppt.ProductId == product.Id)
@@ -267,6 +370,48 @@ namespace ECommerseTemplate.Areas.Customer.Controllers
             }
 
             return recentlyViewedProducts;
+        }
+
+        private ProductDetailsVM.RatingMetrics CalculateRatingMetrics(IEnumerable<ProductReview> reviews)
+        {
+            int reviewCount = reviews.Count();
+            Dictionary<int, int> countOfVotesPerStar = new Dictionary<int, int>();
+            Dictionary<int, int> percentageOfVotesPerStar = new Dictionary<int, int>();
+            // Init dicts
+            for (int i = 1; i <= 5; i++)
+            {
+                countOfVotesPerStar.Add(i, 0);
+                percentageOfVotesPerStar.Add(i, 0);
+            }
+
+
+            foreach (ProductReview review in reviews)
+            {
+                var rating = review.Rating;
+                if (countOfVotesPerStar.ContainsKey(rating))
+                {
+                    countOfVotesPerStar[rating]++;
+                }
+            }
+
+
+            int weightedSum = countOfVotesPerStar.Sum(entry => entry.Key * entry.Value);
+            int averageRating = reviewCount > 0 ? (int)Math.Round((double)weightedSum / reviewCount) : 0;
+
+            // Calculate percentage of votes per star
+            foreach (var key in countOfVotesPerStar.Keys.ToList())
+            {
+                percentageOfVotesPerStar[key] = (int)Math.Round((countOfVotesPerStar[key] / (double)reviewCount) * 100);
+            }
+
+            ProductDetailsVM.RatingMetrics ratingOverview = new ProductDetailsVM.RatingMetrics()
+            {
+                ReviewCount = reviewCount,
+                AverageRating = averageRating,
+                CountOfVotesPerStar = countOfVotesPerStar,
+                PercentageOfVotesPerStar = percentageOfVotesPerStar
+            };
+            return ratingOverview;
         }
     }
 }

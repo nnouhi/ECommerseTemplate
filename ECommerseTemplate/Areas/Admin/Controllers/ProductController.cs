@@ -64,6 +64,12 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     string productPath = Path.Combine(wwwRootPath, "images", "product");
 
+                    // Ensure the directory exists
+                    if (!Directory.Exists(productPath))
+                    {
+                        Directory.CreateDirectory(productPath);
+                    }
+
                     // Delete old image, replace with new one
                     if (!string.IsNullOrEmpty(productVM.Product.ImageUrl))
                     {
@@ -84,7 +90,6 @@ namespace ECommerseTemplate.Areas.Admin.Controllers
 
                 if (isNewEntry)
                 {
-                    productVM.Product.DateAdded = DateTime.Now;
                     _unitOfWork.Product.Add(productVM.Product);
                     _unitOfWork.Save();
 

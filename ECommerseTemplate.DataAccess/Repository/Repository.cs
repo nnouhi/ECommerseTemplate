@@ -51,73 +51,17 @@ public class Repository<T> : IRepository<T> where T : class
         return query.FirstOrDefault();
     }
 
-    public async Task<PaginatedList<T>> GetPaginated<TKey>(Expression<Func<T, TKey>> keySelector, int pageNumber, int pageSize, string? includeProperties = null, bool descending = false)
+    public async Task<PaginatedList<T>> GetPaginated(IQueryable<T> set, int pageNumber, int pageSize)
     {
-        IQueryable<T> query = _dbSet;
-        List<T> items;
-        if (!string.IsNullOrWhiteSpace(includeProperties))
-        {
-            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
-        }
-
-        int count = await query.CountAsync();
-
-        if (!descending)
-        {
-            items = await query
-                .OrderBy(keySelector)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-        }
-        else
-        {
-            items = await query
-                   .OrderByDescending(keySelector)
-                   .Skip((pageNumber - 1) * pageSize)
-                   .Take(pageSize)
-                   .ToListAsync();
-        }
+        int count = await set.CountAsync();
+        List<T> items = await set
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
 
         return new PaginatedList<T>(items, pageNumber, pageSize, count);
     }
 
-    public async Task<PaginatedList<T>> GetPaginated<TKey>(IQueryable<T> set, Expression<Func<T, TKey>> keySelector, int pageNumber, int pageSize, string? includeProperties = null, bool descending = false)
-    {
-        IQueryable<T> query = set;
-        List<T> items;
-        if (!string.IsNullOrWhiteSpace(includeProperties))
-        {
-            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
-        }
-
-        int count = await query.CountAsync();
-
-        if (!descending)
-        {
-            items = await query
-                .OrderBy(keySelector)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-        }
-        else
-        {
-            items = await query
-                   .OrderByDescending(keySelector)
-                   .Skip((pageNumber - 1) * pageSize)
-                   .Take(pageSize)
-                   .ToListAsync();
-        }
-
-        return new PaginatedList<T>(items, pageNumber, pageSize, count);
-    }
     public void Add(T entity)
     {
         _dbSet.Add(entity);
