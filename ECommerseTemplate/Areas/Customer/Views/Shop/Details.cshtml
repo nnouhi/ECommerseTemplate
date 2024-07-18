@@ -201,100 +201,249 @@
         </div>
     </form>
 
-    @* Reviews Section  *@
-    <div class="card-body mt-4">
-        <h1 class="text-center">Reviews</h1>
-        <h4>Customer Reviews</h4>
-        <hr/>
-        <div class="row my-3">
-            <div class="col-8">
-                <div class="row">
-                    <div class="col-4">
-                        @{
-                            int avgRating = Model.RatingOverview.AverageRating;
-                            for (int i = 0; i < 5; i++)
-                            {
-                                var starIcon = i < avgRating ? "bi-star-fill" : "bi-star";
-                                <i class="bi @starIcon"></i>
-                            }
-
-                            <h5>Based on @Model.RatingOverview.ReviewCount reviews</h5>
-                        }
-                        <ul class="nav border-2 mt-2" role="tablist">
-                            <li class="nav-item dropdown">
-                                <a id="dropdownMenuButton" class="nav-link dropdown-toggle border" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                    @Model.ActiveReviewFilter
-                                </a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item @(Model.ReviewFilter == "latest" ? "disabled" : "")"
-                                       href="@Url.Action("Details", "Shop", new { id = Model.ProductId, page = 1, reviewFilter = "latest" })">
-                                        View latest
-                                    </a>
-                                    <a class="dropdown-item @(Model.ReviewFilter == "oldest" ? "disabled" : "")"
-                                       href="@Url.Action("Details", "Shop", new { id = Model.ProductId, page = 1, reviewFilter = "oldest" })">
-                                        View oldest
-                                    </a>
-                                    <a class="dropdown-item @(Model.ReviewFilter == "include-pictures" ? "disabled" : "")"
-                                       href="@Url.Action("Details", "Shop", new { id = Model.ProductId, page = 1, reviewFilter = "include-pictures" })">
-                                        View with pictures
-                                    </a>
-                                    <a class="dropdown-item @(Model.ReviewFilter == "highest-rating" ? "disabled" : "")"
-                                       href="@Url.Action("Details", "Shop", new { id = Model.ProductId, page = 1, reviewFilter = "highest-rating" })">
-                                        View highest rating
-                                    </a>
-                                    <a class="dropdown-item @(Model.ReviewFilter == "lowest-rating" ? "disabled" : "")"
-                                       href="@Url.Action("Details", "Shop", new { id = Model.ProductId, page = 1, reviewFilter = "lowest-rating" })">
-                                        View lowest rating
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-6">
-                        <table class="table">
-                            <tbody>
-                                @for (int i = 1; i <= 5; i++)
+    @if (Model.Reviews.Count > 0)
+    {
+        @* Reviews Section *@
+        <div class="card-body mt-4">
+            <h1 class="text-center">Reviews</h1>
+            <h4>Customer Reviews</h4>
+            <hr />
+            <div class="row my-3">
+                <div class="col-8">
+                    <div class="row">
+                        <div class="col-4">
+                            @{
+                                int avgRating = Model.RatingOverview.AverageRating;
+                                for (int i = 0; i < 5; i++)
                                 {
-                                    int currentStarIndex = 6 - i; // We start from reverse (5->1)
-                                    <tr class="clickable-row" onclick="window.location.href='@Url.Action("Details", "Shop", new { id = Model.ProductId, page = 1, reviewFilter = currentStarIndex + "-star" })'">
-                                        <td class="d-flex gap-1 align-items-center">
-                                            @{
-                                                // Display the star icons for the current rating
-                                                for (int j = 5; j >= 1; j--)
-                                                {
-                                                    var starIcon = j >= i ? "bi-star-fill" : "bi-star";
-                                                    <i class="bi @starIcon"></i>
-                                                }
-                                            }
-                                        </td>
-                                        <td class="w-100">
-                                            @{
-                                                // Calculate the width of the progress bar based on the percentage
-                                                int maxRating = Model.RatingOverview.PercentageOfVotesPerStar.Count + 1;
-                                                var percentage = Model.RatingOverview.PercentageOfVotesPerStar.ContainsKey(maxRating - i)
-                                                ? Model.RatingOverview.PercentageOfVotesPerStar[maxRating - i]
-                                                : 0;
-                                            }
-                                            <div class="progress progress-sm" style="flex: 1;">
-                                                <div class="progress-bar bg-primary" role="progressbar" style="width: @percentage%;" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </td>
-                                        <td>@Model.RatingOverview.PercentageOfVotesPerStar[maxRating - i]%</td>
-                                        <td>(@Model.RatingOverview.CountOfVotesPerStar[maxRating - i])</td>
-                                    </tr>
+                                    var starIcon = i < avgRating ? "bi-star-fill" : "bi-star";
+                                    <i class="bi @starIcon"></i>
                                 }
-                            </tbody>
-                        </table>
+
+                                <h5>Based on @Model.RatingOverview.ReviewCount reviews</h5>
+                            }
+                            <ul class="nav border-2 mt-2" role="tablist">
+                                <li class="nav-item dropdown">
+                                    <a id="dropdownMenuButton" class="nav-link dropdown-toggle border" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                        @Model.ActiveReviewFilter
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item @(Model.ReviewFilter == "latest" ? "disabled" : "")"
+                                           href="@Url.Action("Details", "Shop", new { id = Model.ProductId, page = 1, reviewFilter = "latest" })">
+                                            View latest
+                                        </a>
+                                        <a class="dropdown-item @(Model.ReviewFilter == "oldest" ? "disabled" : "")"
+                                           href="@Url.Action("Details", "Shop", new { id = Model.ProductId, page = 1, reviewFilter = "oldest" })">
+                                            View oldest
+                                        </a>
+                                        <a class="dropdown-item @(Model.ReviewFilter == "include-pictures" ? "disabled" : "")"
+                                           href="@Url.Action("Details", "Shop", new { id = Model.ProductId, page = 1, reviewFilter = "include-pictures" })">
+                                            View with pictures
+                                        </a>
+                                        <a class="dropdown-item @(Model.ReviewFilter == "highest-rating" ? "disabled" : "")"
+                                           href="@Url.Action("Details", "Shop", new { id = Model.ProductId, page = 1, reviewFilter = "highest-rating" })">
+                                            View highest rating
+                                        </a>
+                                        <a class="dropdown-item @(Model.ReviewFilter == "lowest-rating" ? "disabled" : "")"
+                                           href="@Url.Action("Details", "Shop", new { id = Model.ProductId, page = 1, reviewFilter = "lowest-rating" })">
+                                            View lowest rating
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <table class="table">
+                                <tbody>
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        int currentStarIndex = 6 - i; // We start from reverse (5->1)
+                                        <tr class="clickable-row" onclick="window.location.href='@Url.Action("Details", "Shop", new { id = Model.ProductId, page = 1, reviewFilter = currentStarIndex + "-star" })'">
+                                            <td class="d-flex gap-1 align-items-center">
+                                                @{
+                                                    // Display the star icons for the current rating
+                                                    for (int j = 5; j >= 1; j--)
+                                                    {
+                                                        var starIcon = j >= i ? "bi-star-fill" : "bi-star";
+                                                        <i class="bi @starIcon"></i>
+                                                    }
+                                                }
+                                            </td>
+                                            <td class="w-100">
+                                                @{
+                                                    // Calculate the width of the progress bar based on the percentage
+                                                    int maxRating = Model.RatingOverview.PercentageOfVotesPerStar.Count + 1;
+                                                    var percentage = Model.RatingOverview.PercentageOfVotesPerStar.ContainsKey(maxRating - i)
+                                                    ? Model.RatingOverview.PercentageOfVotesPerStar[maxRating - i]
+                                                    : 0;
+                                                }
+                                                <div class="progress progress-sm" style="flex: 1;">
+                                                    <div class="progress-bar bg-primary" role="progressbar" style="width: @percentage%;" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </td>
+                                            <td>@Model.RatingOverview.PercentageOfVotesPerStar[maxRating - i]%</td>
+                                            <td>(@Model.RatingOverview.CountOfVotesPerStar[maxRating - i])</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+                <div class="col-4">
+                    <button id="button-collapse" class="btn btn-primary offset-lg-8" type="button" data-bs-toggle="collapse" data-bs-target="#write-review" aria-expanded="false" aria-controls="write-review">
+                        Write a review
+                    </button>
+                </div>
             </div>
-            <div class="col-4">
-                <button id="button-collapse" class="btn btn-primary offset-lg-8" type="button" data-bs-toggle="collapse" data-bs-target="#write-review" aria-expanded="false" aria-controls="write-review">
+            <div class="collapse mb-2" id="write-review">
+                <div class="card card-body">
+                    <form asp-action="Review" method="post" class="row" enctype="multipart/form-data">
+                        @* Hidden input fields for ProductId and DateAdded *@
+                        <input type="hidden" asp-for="Review.ProductId" value="@Model.ProductId" />
+                        <input type="hidden" asp-for="Review.DateAdded" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fff")" />
+                        <div class="row">
+                            <div class="form-floating py-2 col-8">
+                                <input asp-for="Review.Name" class="form-control border-0 shadow" id="review-name" />
+                                <label asp-for="Review.Name" class="ms-2"></label>
+                                <span asp-validation-for="Review.Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-check col-4 m-auto">
+                                <input type="checkbox" class="form-check-input" id="anonymous-checkbox" />
+                                <label class="form-check-label" for="anonymous-checkbox">Stay Anonymous</label>
+                            </div>
+                            <div class="form-floating py-2 col-12">
+                                <input asp-for="Review.Email" class="form-control border-0 shadow" />
+                                <label asp-for="Review.Email" class="ms-2"></label>
+                                <span asp-validation-for="Review.Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating py-2 col-12">
+                                <select asp-for="Review.Rating" class="form-control border-0 shadow">
+                                    <option value="" disabled selected>Select rating</option>
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <option value="@i">@i Star@(i > 1 ? "s" : "")</option>
+                                    }
+                                </select>
+                                <label asp-for="Review.Rating" class="ms-2"></label>
+                                <span asp-validation-for="Review.Rating" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating py-2 col-12">
+                                <input asp-for="Review.Title" class="form-control border-0 shadow" />
+                                <label asp-for="Review.Title" class="ms-2"></label>
+                                <span asp-validation-for="Review.Title" class="text-danger"></span>
+                            </div>
+                            <div class="py-2 col-12">
+                                <label asp-for="Review.Review" class="ms-2 text-muted"></label>
+                                <textarea asp-for="Review.Review" id="tinymce" class="form-control border-0 shadow"></textarea>
+                                <span asp-validation-for="Review.Review" class="text-danger"></span>
+                            </div>
+                            <div class="py-2 col-12">
+                                <label asp-for="Review.Images" class="ms-2 text-muted"></label>
+                                <input type="file" name="files" multiple class="form-control border-0 shadow" />
+                            </div>
+                            <div class="row pt-2">
+                                <p class="text-danger">Please note that your review will be visible to others once it has been reviewed and approved by an admin.</p>
+                                <div class="col-6 col-md-3">
+                                    <button type="submit" class="btn btn-primary form-control">Submit Review</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="show-reviews">
+                @foreach (ProductReview review in Model.Reviews)
+                {
+                    <div class="review mb-4 p-3 border rounded">
+                        <hr />
+                        @* Star ratings and date *@
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="ratings">
+                                @{
+                                    int rating = review.Rating;
+                                    for (int i = 1; i <= 5; i++)
+                                    {
+                                        var starIcon = i <= rating ? "bi-star-fill" : "bi-star";
+                                        <i class="bi @starIcon"></i>
+                                    }
+                                }
+                            </div>
+                            <div>
+                                <p class="mb-0">@review.DateAdded.ToShortDateString()</p>
+                            </div>
+                        </div>
+                        @* Verified status, name and country *@
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            @if (review.IsUserVerified)
+                            {
+                                <span class="badge bg-primary text-white">Verified</span>
+                            }
+                            <span>@review.Name</span>
+                            <span class="opacity-50">(@review.Country)</span>
+                        </div>
+                        @* Title *@
+                        <h4 class="mt-2">@review.Title</h4>
+                        @* Review *@
+                        @Html.Raw(@review.Review)
+                        @* Show images if exist *@
+                        @if (review.Images.Count > 0)
+                        {
+                            <div class="d-flex gap-2 flex-wrap">
+                                @foreach (string path in review.Images)
+                                {
+                                    <div class="review-image">
+                                        <img src="~/@path" class="review-image" alt="Image" />
+                                    </div>
+                                }
+                            </div>
+                        }
+                        @* Reply *@
+                        @if (!string.IsNullOrEmpty(review.Reply))
+                        {
+                            <div class="card border-secondary mb-3">
+                                <div class="card-header bg-secondary text-white">
+                                    Admin Reply:
+                                </div>
+                                <div class="card-body bg-light text-dark">
+                                    <h5 class="card-text">@Html.Raw(review.Reply)</h5>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+            <!-- Paging Links -->
+            <div class="d-flex flex-column align-items-center">
+                <div>
+                    @Html.PagedListPager(Model.Reviews, page => Url.Action("Details", "Shop", new { id = Model.ProductId, page = page, reviewFilter = Model.ReviewFilter }),
+                             new PagedListRenderOptions
+                {
+                    ContainerDivClasses = new[] { "navigation" },
+                    LiElementClasses = new[] { "page-item" },
+                    PageClasses = new[] { "page-link" },
+                    DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                    DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                    DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                    DisplayLinkToNextPage = PagedListDisplayMode.Always
+                })
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card-body mt-4 text-center">
+            <h1 class="text-center">Reviews</h1>
+            <h4>No reviews yet. Be the first to review!</h4>
+            <hr />
+            <div class="d-flex justify-content-center">
+                <button id="button-collapse" class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#write-review" aria-expanded="false" aria-controls="write-review">
                     Write a review
                 </button>
             </div>
         </div>
-        <div class="collapse mb-2" id="write-review">
+        <div class="collapse mt-4" id="write-review">
             <div class="card card-body">
                 <form asp-action="Review" method="post" class="row" enctype="multipart/form-data">
                     @* Hidden input fields for ProductId and DateAdded *@
@@ -348,75 +497,9 @@
                         </div>
                     </div>
                 </form>
-
             </div>
         </div>
-        <div class="show-reviews">
-            @foreach (ProductReview review in Model.Reviews)
-            {
-                <div class="review mb-4 p-3 border rounded">
-                    <hr />
-                    @* Star ratings and date *@
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div class="ratings">
-                            @{
-                                int rating = review.Rating;
-                                for (int i = 1; i <= 5; i++)
-                                {
-                                    var starIcon = i <= rating ? "bi-star-fill" : "bi-star";
-                                    <i class="bi @starIcon"></i>
-                                }
-                            }
-                        </div>
-                        <div>
-                            <p class="mb-0">@review.DateAdded.ToShortDateString()</p>
-                        </div>
-                    </div>
-                    @* Verified status, name and country *@
-                    <div class="d-flex align-items-center gap-2 mb-2">
-                        @if (review.IsUserVerified)
-                        {
-                            <span class="badge bg-primary text-white">Verified</span>
-                        }
-                        <span>@review.Name</span>
-                        <span class="opacity-50">(@review.Country)</span>
-                    </div>
-                    @* Title *@
-                    <h4 class="mt-2">@review.Title</h4>
-                    @* Review *@
-                    @Html.Raw(@review.Review)
-                    @* Show images if exist *@
-                    @if (review.Images.Count > 0)
-                    {
-                        <div class="d-flex gap-2 flex-wrap">
-                            @foreach (string path in review.Images)
-                            {
-                                <div class="review-image">
-                                    <img src="~/@path" class="review-image" alt="Image" />
-                                </div>
-                            }
-                        </div>
-                    }
-                </div>
-            }
-        </div>
-        <!-- Paging Links -->
-        <div class="d-flex flex-column align-items-center">
-            <div>
-                @Html.PagedListPager(Model.Reviews, page => Url.Action("Details", "Shop", new { id = Model.ProductId, page = page, reviewFilter = Model.ReviewFilter }),
-                    new PagedListRenderOptions
-                    {
-                        ContainerDivClasses = new[] { "navigation" },
-                        LiElementClasses = new[] { "page-item" },
-                        PageClasses = new[] { "page-link" },
-                        DisplayLinkToFirstPage = PagedListDisplayMode.Always,
-                        DisplayLinkToLastPage = PagedListDisplayMode.Always,
-                        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
-                        DisplayLinkToNextPage = PagedListDisplayMode.Always
-                    })
-            </div>
-        </div>
-    </div>
+    }
 </div>
 
 @section Scripts

@@ -43,9 +43,13 @@ namespace ECommerseTemplate.Models
         [ValidateNever]
         public bool IsAdminApproved { get; set; } // An admin needs to approve of the review to be published
 
+        [ValidateNever]
+        public string Reply { get; set; } = ""; // Admin reply to the review
+
         [Display(Name = "Images (Use CTRL to select multiple images to upload)")]
         [NotMapped]
         [ValidateNever]
+
         public List<string> Images { get; set; }
 
         [NotMapped]

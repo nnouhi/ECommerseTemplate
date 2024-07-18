@@ -8,9 +8,11 @@ function loadDataTable() {
             url: "/admin/productreview/getall",
             type: "GET",
             datatype: "json",
+            succuss: function (data) { console.log(data) }
         },
         columns: [
             { data: 'name', width: '20%' },
+            { data: 'rating', width: '20%' },
             { data: 'email', width: '20%' },
             { data: 'title', width: '20%' },
             {
@@ -42,18 +44,21 @@ function loadDataTable() {
                 }
             },
             {
-                data: { id: 'id', isAdminApproved: 'IsAdminApproved', width: '33%' },
+                data: null,
                 render: function (data) {
+                    let replyBtnText = data.reply ? "Edit Reply" : "Reply";
                     if (data.isAdminApproved) {
                         return `
                             <div class="w-75 btn-group" role="group">
                                 <a href="/admin/productreview/verifyreview?id=${data.id}&verify=false" class="btn btn-danger mx-2"><i class="bi bi-eye-slash-fill"></i> Hide</a>
+                                <a href="/admin/productreview/reply?id=${data.id}" class="btn btn-info mx-2"><i class="bi bi-reply-fill"></i> ${replyBtnText}</a>
                             </div>
                         `;
                     } else {
                         return `
                             <div class="w-75 btn-group" role="group">
                                 <a href="/admin/productreview/verifyreview?id=${data.id}&verify=true" class="btn btn-primary mx-2"><i class="bi bi-eye-fill"></i> Verify</a>
+                                <a href="/admin/productreview/reply?id=${data.id}" class="btn btn-info mx-2"><i class="bi bi-reply-fill"></i> ${replyBtnText} </a>
                             </div>
                         `;
                     }

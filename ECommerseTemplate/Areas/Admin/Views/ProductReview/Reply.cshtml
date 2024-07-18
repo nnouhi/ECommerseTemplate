@@ -1,0 +1,100 @@
+﻿@model ProductReview
+
+<style>
+    .review-image {
+        width: 100%;
+        max-width: 150px;
+        height: auto;
+    }
+</style>
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Reply to review</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form asp-action="Reply" method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="Id" hidden />
+            <div class="row">
+                <div class="col-12">
+                    <div class="border p-3">
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Name" class="form-control border-0 shadow" readonly />
+                            <label asp-for="Name" class="ms-2"></label>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Email" class="form-control border-0 shadow" readonly />
+                            <label asp-for="Email" class="ms-2"></label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Rating" class="form-control border-0 shadow" readonly />
+                            <label asp-for="Rating" class="ms-2"></label>
+                            <span asp-validation-for="Rating" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Title" class="form-control border-0 shadow" readonly />
+                            <label asp-for="Title" class="ms-2"></label>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        @if (Model.Images.Count > 0)
+                        {
+                            <div class="d-flex gap-2 col-12">
+                                <label asp-for="Images" class="ms-2"></label>
+                                @foreach (string path in Model.Images)
+                                {
+                                    <img src="~/@path" class="review-image">
+                                }
+                            </div>
+                        }
+                        <div class="py-2 col-12">
+                            <label asp-for="Review" class="ms-2 text-muted"></label>
+                            <textarea asp-for="Review" id="tinymce-review" class="form-control border-0 shadow"></textarea>
+                        </div>
+                        <div class="py-2 col-12">
+                            <label asp-for="Reply" class="ms-2 text-muted"></label>
+                            <textarea asp-for="Reply" id="tinymce-reply" class="form-control border-0 shadow"></textarea>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-6 col-md-3">
+                                <button type="submit" class="btn btn-primary form-control">Reply</button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="ProductReview" asp-action="Index" class="btn btn-outline-primary border form-control">
+                                    Back to List
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        tinymce.init({
+            selector: '#tinymce-review',
+            plugins: 'lists link image table',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+            setup: function (editor) {
+                editor.on('init', function () {
+                    editor.getBody().setAttribute('contenteditable', false); // Make the review readonly
+                });
+            }
+        });
+
+        tinymce.init({
+            selector: '#tinymce-reply',
+            plugins: 'lists link image table',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}
